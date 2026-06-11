@@ -1,1 +1,30 @@
 @import "tailwindcss";
+
+@font-face {
+  font-family: "CC Regeneration";
+  src: url("/font/FONNTS.COM-CCREGENERATION.OTF") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Noto Sans";
+  src: url("/font/NotoSans-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Noto Sans";
+  src: url("/font/NotoSans-ExtraBold.ttf") format("truetype");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme {
+  --font-sans: "Noto Sans", sans-serif;
+  --font-display: "CC Regeneration", sans-serif;
+}

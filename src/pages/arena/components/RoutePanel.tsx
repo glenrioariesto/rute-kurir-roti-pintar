@@ -62,7 +62,7 @@ export const RoutePanel: React.FC<RoutePanelProps> = ({
   return (
     <div className="flex flex-col gap-5 h-full">
       {/* 1. MANIFEST ROUTE TIMELINE */}
-      <div className="bg-white rounded-2xl p-4 border border-slate-150 flex-1 flex flex-col min-h-[140px] shadow-sm">
+      <div className="bg-white rounded-2xl p-2 md:p-4 border border-slate-150 flex-1 flex flex-col min-h-[140px] shadow-sm">
         <h4 className="text-sm font-bold text-slate-800 mb-2 flex items-center gap-1.5">
           <Sparkles className="w-4 h-4 text-amber-500" />
           <span>Alur Perjalanan Saat Ini</span>
@@ -89,7 +89,7 @@ export const RoutePanel: React.FC<RoutePanelProps> = ({
                            : 'bg-indigo-50 text-indigo-900 border-indigo-150'
                       }`}
                     >
-                      <span className="text-[11px] opacity-70">#{index + 1}</span>
+                      <span className="text-[8.5px] md:text-[11px] opacity-70">#{index + 1}</span>
                       <span>{isToko ? '🥖 Toko Roti' : `Rumah ${leg.nodeId}`}</span>
                     </div>
 

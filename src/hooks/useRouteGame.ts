@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { LevelConfig } from '@/types';
-import { calculateRouteMetrics, findOptimalRoute, visitsAllHouses, formatTime } from '@utils/findOptimalRoute';
+import { calculateRouteMetrics, findOptimalRoute, visitsAllHouses } from '@utils/findOptimalRoute';
 
 export function useRouteGame(level: LevelConfig) {
   const [selectedRoute, setSelectedRoute] = useState<string[]>(['Toko']);
@@ -86,12 +86,10 @@ export function useRouteGame(level: LevelConfig) {
           // If this is the first step of the path, we cannot go back to the predecessor
           if (node === from && neighbor === predecessor) continue;
 
-          const neighborHouse = level.houses.find(h => h.id === neighbor);
-          if (neighborHouse?.isWaypoint || neighbor === to) {
-            visited.add(neighbor);
-            dfs(neighbor, [...currentPath, neighbor], visited);
-            visited.delete(neighbor);
-          }
+          // Allow transiting through any node (house or waypoint)
+          visited.add(neighbor);
+          dfs(neighbor, [...currentPath, neighbor], visited);
+          visited.delete(neighbor);
         }
       };
 
@@ -100,7 +98,7 @@ export function useRouteGame(level: LevelConfig) {
     };
 
     if (lastNode === 'Toko' && selectedRoute.length > 1) {
-      setErrorToast('🔒 Rute sudah ditutup kembali ke Toko Roti. Sila klik "Kirim" atau "Reset"!');
+      setErrorToast('🔒 Rute sudah ditutup kembali ke Toko Roti. Silakan klik "Berangkat" atau "Ulangi"!');
       setTimeout(() => setErrorToast(null), 3000);
       return;
     }
@@ -117,18 +115,45 @@ export function useRouteGame(level: LevelConfig) {
       return;
     }
 
-    let path = allPaths[0];
+    // Hitung jarak (dalam meter) untuk setiap rute yang ditemukan
+    const getPathDistance = (p: string[], startNode: string): number => {
+      let dist = 0;
+      let curr = startNode;
+      for (const node of p) {
+        const conn = level.connections.find(
+          c => !c.isBlockedByLevel &&
+               ((c.from === curr && c.to === node) || (c.from === node && c.to === curr))
+        );
+        if (conn) dist += conn.distance;
+        curr = node;
+      }
+      return dist;
+    };
 
-    if (allPaths.length > 1) {
-      // Jika salah satu rute adalah koneksi langsung (panjang path = 1), gunakan koneksi langsung tersebut.
-      // Ini mencegah error "Ada 2 rute" ketika berpindah dari rumah ke waypoint tetangga terdekatnya.
-      const directPath = allPaths.find(p => p.length === 1);
+    const pathsWithDist = allPaths.map(p => ({
+      path: p,
+      distance: getPathDistance(p, lastNode)
+    }));
+
+    // Cari jarak minimum
+    const minDistance = Math.min(...pathsWithDist.map(pwd => pwd.distance));
+
+    // Filter rute yang jaraknya wajar (tidak lebih dari 1.8 kali lipat jarak terpendek)
+    // agar jalan memutar yang sangat jauh/looping otomatis disaring,
+    // sedangkan 2 jalan alternatif yang wajar tetap ditanyakan (Ada 2 rute).
+    const validPaths = pathsWithDist.filter(pwd => pwd.distance <= 1.8 * minDistance);
+
+    let path = validPaths[0].path;
+
+    if (validPaths.length > 1) {
+      // Jika salah satu rute yang valid adalah koneksi langsung (panjang path = 1), gunakan koneksi langsung tersebut.
+      const directPath = validPaths.find(pwd => pwd.path.length === 1);
       if (directPath) {
-        path = directPath;
+        path = directPath.path;
       } else {
         const targetHouse = level.houses.find(h => h.id === houseId);
         const displayName = targetHouse?.isWaypoint ? targetHouse.name : houseId === 'Toko' ? 'Toko Roti' : `Rumah ${houseId}`;
-        setErrorToast(`⚠️ Ada 2 rute ke ${displayName}. Pilih jalur dengan mengeklik titik bulat (waypoint) di peta!`);
+        setErrorToast(`⚠️ Ada beberapa rute ke ${displayName}. Pilih jalur dengan mengeklik titik belok di peta!`);
         setTimeout(() => setErrorToast(null), 4000);
         return;
       }
@@ -187,6 +212,15 @@ export function useRouteGame(level: LevelConfig) {
     setIsDelivering(true);
     deliveringRef.current = true;
     setShowResult(false);
+  };
+
+  const handleStopDeliver = () => {
+    setIsDelivering(false);
+    deliveringRef.current = false;
+    stepRef.current = 0;
+    progressRef.current = 0;
+    setAnimationStep(0);
+    setAnimationProgress(0);
   };
 
   // Animation loop — gunakan ref agar tidak stale
@@ -255,26 +289,23 @@ export function useRouteGame(level: LevelConfig) {
     const distance = metrics.distance;
     const time = metrics.time;
 
-    if (level.timeLimitMinutes && time > level.timeLimitMinutes) {
-      setScore(50);
-      setFeedback(`Waktu melebihi batas (${formatTime(time)}). Roti terlambat sampai!`);
-      setShowResult(true);
-      return;
-    }
 
-    const diff = Math.round((distance - optimal.distance) * 10) / 10;
-    let finalScore = 60;
+
+    const ratio = optimal.distance / distance;
+    let finalScore = Math.round(100 * ratio);
+    finalScore = Math.max(10, Math.min(100, finalScore));
+
     let finalFeedback = '';
-
-    if (diff <= 0.05) {
-      finalScore = 100;
+    if (finalScore === 100) {
       finalFeedback = 'Hebat! Kamu menemukan rute terpendek yang sempurna! ⭐';
-    } else if (diff <= 2.1) {
-      finalScore = 80;
-      finalFeedback = `Hampir sempurna! Selisih ${diff} m dari rute terbaik. Coba lagi!`;
+    } else if (finalScore >= 85) {
+      finalFeedback = `Sangat baik! Rutenya sudah sangat efisien (Skor: ${finalScore}). Sedikit lagi menuju sempurna!`;
+    } else if (finalScore >= 70) {
+      finalFeedback = `Cukup baik (Skor: ${finalScore})! Namun rutenya masih bisa dioptimalkan agar lebih pendek.`;
+    } else if (finalScore >= 50) {
+      finalFeedback = `Rutenya cukup panjang (Skor: ${finalScore}). Cobalah mencari jalan pintas atau urutan yang lebih searah.`;
     } else {
-      finalScore = 60;
-      finalFeedback = 'Coba kunjungi rumah-rumah terdekat secara berurutan agar lebih hemat m!';
+      finalFeedback = `Rutenya sangat panjang dan tidak efisien (Skor: ${finalScore}). Perhatikan posisi rumah terdekat untuk menghemat jarak!`;
     }
 
     setScore(finalScore);
@@ -321,6 +352,7 @@ export function useRouteGame(level: LevelConfig) {
     handleUndo,
     handleReset,
     handleDeliver,
+    handleStopDeliver,
     getCourierPosition,
     attempts,
     deliverySpeed,

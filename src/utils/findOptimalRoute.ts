@@ -144,3 +144,10 @@ export function formatTime(minutes: number): string {
     return '0 detik';
   }
 }
+
+export function formatDistance(meters: number): string {
+  if (meters >= 1000) {
+    return `${parseFloat((meters / 1000).toFixed(2))} km`;
+  }
+  return `${meters} m`;
+}

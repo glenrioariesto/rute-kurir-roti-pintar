@@ -43,16 +43,16 @@ export const levels: LevelConfig[] = [
     startTimeString: '07:00',
     houses: [
       { id: 'Toko', name: 'Toko Roti🥖', x: 95, y: 375, markerImage: '/assets/point-roti.webp', markerSize: 40, hideIcon: true, markerOffset : { x: -45, y: -95, } },
-      { id: 'A', name: 'Rumah A', x: 195, y: 325, markerImage: '/assets/point-a.webp', markerSize: 40, markerOffset : { x: -20, y: -85  , } },
-      { id: 'B', name: 'Rumah B', x: 365, y: 225, markerImage: '/assets/point-b.webp', markerSize: 40, hideIcon: true, markerOffset : { x:-40, y: -70, } },
-      { id: 'C', name: 'Rumah C', x: 325, y: 325, markerImage: '/assets/point-c.webp', markerSize: 40, hideIcon: true, markerOffset : { x: 25, y: -75, } },
-      { id: 'D', name: 'Rumah D', x: 560, y: 375, markerImage: '/assets/point-d.webp', markerSize: 40, hideIcon: true, markerOffset : { x: -25, y: -95, } },
-      { id: 'E', name: 'Rumah E', x: 500, y: 230, markerImage: '/assets/point-e.webp', markerSize: 40, hideIcon: true, markerOffset : { x: 35, y: -80, } },
-      { id: 'F', name: 'Rumah F', x: 670, y: 200, markerImage: '/assets/point-f.webp', markerSize: 40, hideIcon: true, markerOffset : { x: 35, y: -85, } },
-      { id: 'wp-1', name: 'belok-1', x: 205, y: 450, isWaypoint: true },
+      { id: 'A', name: 'Rumah A', x: 195, y: 325, markerImage: '/assets/point-a.webp', markerSize: 40, markerOffset : { x: -20, y: -85  , }, radarColor: "#F2000D" },
+      { id: 'B', name: 'Rumah B', x: 365, y: 225, markerImage: '/assets/point-b.webp', markerSize: 40, hideIcon: true, markerOffset : { x:-40, y: -70, }, radarColor: "#FC8C00" },
+      { id: 'C', name: 'Rumah C', x: 325, y: 325, markerImage: '/assets/point-c.webp', markerSize: 40, hideIcon: true, markerOffset : { x: 35, y: -65, }, radarColor: "#B25826" },
+      { id: 'D', name: 'Rumah D', x: 560, y: 375, markerImage: '/assets/point-d.webp', markerSize: 40, hideIcon: true, markerOffset : { x: -10, y: -85, }, radarColor: "#FEBE00" },
+      { id: 'E', name: 'Rumah E', x: 500, y: 230, markerImage: '/assets/point-e.webp', markerSize: 40, hideIcon: true, markerOffset : { x: 40, y: -70, }, radarColor: "#009B00" },
+      { id: 'F', name: 'Rumah F', x: 670, y: 200, markerImage: '/assets/point-f.webp', markerSize: 40, hideIcon: true, markerOffset : { x: 35, y: -85, }, radarColor: "#009791" },
+      { id: 'wp-1', name: 'belok-1', x: 205, y: 440, isWaypoint: true },
       { id: 'wp-2', name: 'belok-2', x: 262, y: 287, isWaypoint: true },
       { id: 'wp-3', name: 'belok-3', x: 373, y: 352, isWaypoint: true },
-      { id: 'wp-4', name: 'belok-4', x: 485, y: 415, isWaypoint: true },
+      { id: 'wp-4', name: 'belok-4', x: 485, y: 405, isWaypoint: true },
       { id: 'wp-5', name: 'belok-5', x: 540, y: 255, isWaypoint: true },
       { id: 'wp-6', name: 'belok-6', x: 655, y: 320, isWaypoint: true },
       { id: 'wp-7', name: 'belok-7', x: 765, y: 255, isWaypoint: true },
@@ -62,37 +62,37 @@ export const levels: LevelConfig[] = [
     ],
     connections: [
       // --- AREA KIRI (Toko, A) ---
-      { id: 'Toko-A',   from: 'Toko', to: 'A',    distance: 120 }, // Langsung dari Toko ke A
-      { id: 'Toko-wp1', from: 'Toko', to: 'wp-1', distance: 150 },
+      { id: 'Toko-A',   from: 'Toko', to: 'A',    distance: 110 }, // Langsung dari Toko ke A
+      { id: 'Toko-wp1', from: 'Toko', to: 'wp-1', distance: 100 },
 
       // --- PERCABANGAN KIRI-TENGAH (A, B, C via wp-2) ---
-      { id: 'A-wp2',    from: 'A',    to: 'wp-2', distance: 80 },
-      { id: 'B-wp2',    from: 'B',    to: 'wp-2', distance: 5 },
-      { id: 'C-wp2',    from: 'C',    to: 'wp-2', distance: 3 },
+      { id: 'A-wp2',    from: 'A',    to: 'wp-2', distance: 40 },
+      { id: 'B-wp2',    from: 'B',    to: 'wp-2', distance: 110 },
+      { id: 'C-wp2',    from: 'C',    to: 'wp-2', distance: 70 },
 
       // --- AREA TENGAH (C, wp-1, wp-3, wp-4) ---
-      { id: 'wp1-wp3',  from: 'wp-1', to: 'wp-3', distance: 200 },
-      { id: 'C-wp3',    from: 'C',    to: 'wp-3', distance: 2 },
-      { id: 'wp3-wp4',  from: 'wp-3', to: 'wp-4', distance: 5 },
-      { id: 'wp3-wp5',  from: 'wp-3', to: 'wp-5', distance: 8 },
+      { id: 'wp1-wp3',  from: 'wp-1', to: 'wp-3', distance: 150 },
+      { id: 'C-wp3',    from: 'C',    to: 'wp-3', distance: 30 },
+      { id: 'wp3-wp4',  from: 'wp-3', to: 'wp-4', distance: 100 },
+      { id: 'wp3-wp5',  from: 'wp-3', to: 'wp-5', distance: 150 },
 
       // --- AKSES KE D (Hanya bisa via wp-4 atau wp-6) ---
-      { id: 'wp4-D',    from: 'wp-4', to: 'D',    distance: 3 },
-      { id: 'D-wp6',    from: 'D',    to: 'wp-6', distance: 4 }, // D menuju rute F
+      { id: 'wp4-D',    from: 'wp-4', to: 'D',    distance: 80 },
+      { id: 'D-wp6',    from: 'D',    to: 'wp-6', distance: 70 }, // D menuju rute F
 
       // --- AKSES KE E (Via wp-5 atau wp-8) ---
-      { id: 'wp5-E',    from: 'wp-5', to: 'E',    distance: 2 },
-      { id: 'B-wp8',    from: 'B',    to: 'wp-8', distance: 3 },
-      { id: 'wp8-E',    from: 'wp-8', to: 'E',    distance: 3 },
+      { id: 'wp5-E',    from: 'wp-5', to: 'E',    distance: 50 },
+      { id: 'B-wp8',    from: 'B',    to: 'wp-8', distance: 40 },
+      { id: 'wp8-E',    from: 'wp-8', to: 'E',    distance: 50 },
 
       // --- AREA KANAN / MENUJU F (Via wp-6, wp-7, wp-9) ---
-      { id: 'wp5-wp6',  from: 'wp-5', to: 'wp-6', distance: 5 },
-      { id: 'wp6-wp7',  from: 'wp-6', to: 'wp-7', distance: 5 },
-      { id: 'wp7-F',    from: 'wp-7', to: 'F',    distance: 4 }, // Wajib masuk F lewat wp-7 jika dari bawah
+      { id: 'wp5-wp6',  from: 'wp-5', to: 'wp-6', distance: 100 },
+      { id: 'wp6-wp7',  from: 'wp-6', to: 'wp-7', distance: 150 },
+      { id: 'wp7-F',    from: 'wp-7', to: 'F',    distance: 100 }, // Wajib masuk F lewat wp-7 jika dari bawah
 
       // --- JALUR UTARA BEBAS HAMBATAN (B -> E -> F via wp-8, wp-9) ---
-      { id: 'wp8-wp9',  from: 'wp-8', to: 'wp-9', distance: 5 },
-      { id: 'F-wp9',    from: 'F',    to: 'wp-9', distance: 6 }, // Masuk F dari atas
+      { id: 'wp8-wp9',  from: 'wp-8', to: 'wp-9', distance: 100 },
+      { id: 'F-wp9',    from: 'F',    to: 'wp-9', distance: 110 }, // Masuk F dari atas
     ],
     ctExplanation: {
       decomposition: 'Mengurai peta pengantaran 6 titik menjadi rute antar persimpangan dan lokasi rumah warga.',
@@ -243,11 +243,9 @@ export const levels: LevelConfig[] = [
     //              Toko(400,430)
     //
     id: 5,
-    title: 'Level 5: Batas Waktu (Ujian Logistik)',
-    description: 'Ujian kurir profesional! Roti harus dikirim sebelum jam 08:00 (batas 60 menit). Rencanakan rute seefisien mungkin!',
-    hints: 'Gunakan node F di tengah sebagai shortcut. Rencanakan perjalanan agar selesai dalam waktu sesingkat-singkatnya.',
-    timeLimitMinutes: 60,
-    startTimeString: '07:00',
+    title: 'Level 5: Efisiensi Maksimal (Ujian Logistik)',
+    description: 'Ujian kurir profesional! Kirimkan roti ke seluruh rumah warga dengan rute terpendek!',
+    hints: 'Gunakan node F di tengah sebagai shortcut. Rencanakan rute perjalanan seefisien mungkin.',
     houses: [
       { id: 'Toko', name: 'Toko Roti', x: 400, y: 430, color: '#f59e0b' },
       { id: 'A',    name: 'Rumah A',   x: 120, y: 300, color: '#3b82f6' },
@@ -272,10 +270,10 @@ export const levels: LevelConfig[] = [
       { id: 'E-F',    from: 'E',    to: 'F', distance: 4 },
     ],
     ctExplanation: {
-      decomposition: 'Pecah masalah besar menjadi pencarian rute terpendek dan pengecekan apakah total waktu melebihi batas.',
-      patternRecognition: 'Rute terpendek m belum tentu yang tercepat — pertimbangkan shortcut via F di tengah.',
-      abstraction: 'Sederhanakan constraint dengan memfokuskan pencarian pada rute terpendek yang tetap berada di bawah batas waktu 60 menit.',
-      algorithm: 'Constraint Optimization: cari rute yang memenuhi batasan waktu dengan total m sekecil mungkin.',
+      decomposition: 'Pecah masalah besar menjadi pencarian rute terpendek untuk seluruh rumah warga.',
+      patternRecognition: 'Rute terpendek m dicapai dengan membandingkan jalan memutar vs shortcut via F di tengah.',
+      abstraction: 'Sederhanakan peta dengan memfokuskan pencarian pada rute terpendek dalam meter.',
+      algorithm: 'Constraint Optimization: cari rute dengan total m sekecil mungkin.',
     },
   },
 ];

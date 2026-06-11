@@ -1,4 +1,4 @@
-import { Truck, Sparkles, ChevronRight } from 'lucide-react';
+import { Sparkles, ChevronRight } from 'lucide-react';
 
 interface SplashPageProps {
   onStart: () => void;
@@ -10,12 +10,11 @@ export function SplashPage({ onStart }: SplashPageProps) {
 
       {/* Logo */}
       <div className="px-4 py-2 shrink-0">
-        <div className="flex items-center gap-2">
-          <div className="p-1.5 bg-amber-500 rounded-lg text-white shadow-sm">
-            <Truck className="w-3.5 h-3.5" />
-          </div>
-          <span className="text-xs font-black text-slate-800 tracking-tight">Roti Pintar</span>
-        </div>
+        <img 
+          src="/logo-pusbuk.webp" 
+          alt="Logo Pusbuk" 
+          className="h-8 w-auto object-contain"
+        />
       </div>
 
       {/* Konten tengah */}
@@ -28,18 +27,18 @@ export function SplashPage({ onStart }: SplashPageProps) {
           Computational Thinking Game
         </span>
 
-        <h1 className="text-xl sm:text-3xl font-black text-slate-800 leading-tight">
+        <h1 className="text-xl sm:text-3xl font-black text-slate-800 leading-tight font-display tracking-wide">
           Rute Kurir<br />
           <span className="text-amber-500">Roti Pintar</span>
         </h1>
 
-        <p className="text-slate-500 text-[11px] sm:text-xs max-w-[260px] leading-relaxed font-medium">
+        <p className="text-slate-500 text-[8.5px] md:text-[11px] max-w-[260px] leading-relaxed font-medium">
           Bantu kurir menemukan rute tercepat untuk mengantarkan roti ke semua rumah warga setiap pagi!
         </p>
 
         <button
           onClick={onStart}
-          className="mt-1 flex items-center gap-1.5 px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs sm:text-sm rounded-xl shadow-lg shadow-amber-500/30 transition-all active:scale-95"
+          className="mt-1 flex items-center gap-1.5 px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs sm:text-sm rounded-xl shadow-lg shadow-amber-500/30 transition-all active:scale-95 font-display tracking-wider"
         >
           Mulai Bermain
           <ChevronRight className="w-3.5 h-3.5" />

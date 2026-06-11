@@ -1,6 +1,7 @@
 import React, { useRef, useState, useCallback, useEffect } from 'react';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft, SkipBack, RotateCcw, Truck, ChevronDown, ChevronUp } from 'lucide-react';
 import { Connection, LevelConfig } from '@/types';
+import { formatDistance } from '@utils/findOptimalRoute';
 
 interface MapCanvasProps {
   level: LevelConfig;
@@ -11,6 +12,13 @@ interface MapCanvasProps {
   courierPos: { x: number; y: number };
   onHouseClick: (id: string) => void;
   onBack: () => void;
+  onUndo: () => void;
+  onReset: () => void;
+  onDeliver: () => void;
+  onStopDeliver: () => void;
+  deliverySpeed: number;
+  onChangeSpeed: (speed: number) => void;
+  currentMetrics: { distance: number; time: number; isValid: boolean };
 }
 
 const ASSETS = {
@@ -31,10 +39,13 @@ const INITIAL: Transform = { x: 0, y: 0, scale: 1 };
 
 export const MapCanvas: React.FC<MapCanvasProps> = ({
   level, selectedRoute, segmentLengths, isDelivering, animationStep, courierPos, onHouseClick, onBack,
+  onUndo, onReset, onDeliver, onStopDeliver, deliverySpeed, onChangeSpeed, currentMetrics,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [tf, setTf] = useState<Transform>(INITIAL);
   const tfRef = useRef<Transform>(INITIAL);
+  const [isControlsExpanded, setIsControlsExpanded] = useState(true);
+  const [showRouteTimeline, setShowRouteTimeline] = useState(false);
 
   const updateTf = useCallback((updater: (prev: Transform) => Transform) => {
     setTf(prev => {
@@ -214,33 +225,149 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
     return steps;
   };
 
+  // Group segments between actual houses/store (filtering out waypoints) and sum their distances
+  const legs: { nodeId: string; distanceToNext?: number }[] = [];
+  if (selectedRoute.length > 0) {
+    let currentLegNode = selectedRoute[0];
+    let currentLegDistance = 0;
+
+    for (let i = 0; i < selectedRoute.length - 1; i++) {
+      const fromId = selectedRoute[i];
+      const toId = selectedRoute[i + 1];
+
+      const conn = level.connections.find(
+        (c) =>
+          ((c.from === fromId && c.to === toId) || (c.from === toId && c.to === fromId)) &&
+          !c.isBlockedByLevel
+      );
+      const dist = conn ? conn.distance : 0;
+      currentLegDistance += dist;
+
+      const nextHouse = level.houses.find((h) => h.id === toId);
+      if (nextHouse && !nextHouse.isWaypoint) {
+        legs.push({
+          nodeId: currentLegNode,
+          distanceToNext: currentLegDistance,
+        });
+        currentLegNode = toId;
+        currentLegDistance = 0;
+      }
+    }
+    legs.push({ nodeId: currentLegNode });
+  }
+
   return (
     <div className="relative w-full h-full overflow-hidden select-none" style={{ backgroundImage: `url(${ASSETS.canvasBg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
       {/* Back button */}
       <button
         onClick={onBack}
-        className="absolute top-3 left-3 z-20 bg-white/90 border border-slate-200 rounded-lg p-1.5 shadow-sm hover:bg-white active:scale-95 transition text-slate-600"
+        className="absolute top-3 left-3 z-20 bg-white/60 backdrop-blur-md border border-slate-200/80 rounded-lg p-1.5 shadow-sm hover:bg-white/85 active:scale-95 transition text-slate-600"
+        title="Kembali"
       >
         <ChevronLeft className="w-4 h-4" />
       </button>
 
       {/* Hint */}
-      <div className="absolute top-3 left-12 z-20 pointer-events-none">
-        <div className="text-[11px] font-medium text-slate-600 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-lg shadow-sm border border-slate-200 flex items-center gap-1.5">
+      <div className="absolute top-3 left-12 z-20 pointer-events-none block md:hidden">
+        <div className="text-[11px] font-medium text-slate-600 bg-white/60 backdrop-blur-md px-2.5 py-1 rounded-lg shadow-sm border border-slate-200/80 flex items-center gap-1.5">
           <span className="w-2 h-2 rounded-full bg-indigo-500 animate-ping shrink-0" />
-          Geser / cubit untuk zoom · klik titik lokasi untuk rute
+          Geser / cubit untuk memperbesar/memperkecil <br/> · klik titik lokasi untuk rute
         </div>
       </div>
 
-      {/* Reset button */}
-      <button
-        onClick={resetView}
-        className="absolute top-3 right-3 z-20 bg-white/90 border border-slate-200 rounded-lg px-2.5 py-1 text-[11px] font-semibold text-slate-600 shadow-sm hover:bg-white active:scale-95 transition"
-      >
-        ⟳ Reset View
-      </button>
+      {/* Top Right Header Actions Container */}
+      <div className="absolute top-3 right-3 z-20 flex items-center gap-1.5 sm:gap-2">
+        {/* Route panel button */}
+        <button
+          onClick={() => setShowRouteTimeline(prev => !prev)}
+          className={`bg-white/60 backdrop-blur-md border rounded-lg px-2.5 py-1 text-[8.5px] md:text-[11px] font-semibold shadow-sm hover:bg-white/85 active:scale-95 transition flex items-center gap-1 font-display tracking-wider ${
+            showRouteTimeline
+              ? 'border-indigo-500 text-indigo-700 bg-indigo-50/45'
+              : 'border-slate-200/80 text-slate-600'
+          }`}
+        >
+          📋 Rute
+        </button>
 
+        {/* Reset button */}
+        <button
+          onClick={resetView}
+          className="bg-white/60 backdrop-blur-md border border-slate-200/80 rounded-lg px-2.5 py-1 text-[8.5px] md:text-[11px] font-semibold text-slate-600 shadow-sm hover:bg-white/85 active:scale-95 transition font-display tracking-wider"
+        >
+          ⟳ Tampilan Awal
+        </button>
+      </div>
 
+      {/* Route Timeline Floating Panel */}
+      {showRouteTimeline && (
+        <div className="absolute top-14 left-3 right-3 sm:left-auto sm:right-3 z-20 w-[calc(100%-24px)] sm:w-80 max-h-[60vh] bg-white/75 backdrop-blur-md border border-slate-200/80 rounded-2xl p-3 sm:p-4 shadow-lg flex flex-col gap-2.5 overflow-hidden animate-fade-in">
+          <div className="flex items-center justify-between border-b border-slate-100 pb-2 shrink-0">
+            <h4 className="text-[10px] sm:text-xs font-black text-slate-800 uppercase tracking-wider flex items-center gap-1.5 font-display">
+              <span>📋 Alur Perjalanan ({legs.length > 0 ? legs.length - 1 : 0} Kunjungan)</span>
+            </h4>
+            <button
+              onClick={() => setShowRouteTimeline(false)}
+              className="text-slate-400 hover:text-slate-600 transition text-[8.5px] md:text-[11px] font-bold font-display"
+            >
+              Tutup
+            </button>
+          </div>
+
+          {/* Live Metrics inside panel */}
+          <div className="bg-slate-50/45 backdrop-blur-xs p-2 sm:p-2.5 rounded-xl border border-slate-200 shrink-0">
+            <div className="flex flex-col">
+              <span className="text-[8px] md:text-[9px] font-bold text-slate-400 uppercase">Jarak Tempuh</span>
+              <span className="text-[10.5px] md:text-xs font-extrabold text-slate-700 font-mono mt-0.5">{formatDistance(currentMetrics.distance)}</span>
+            </div>
+          </div>
+          
+          <div className="flex-1 overflow-y-auto pr-1 min-h-0">
+            {legs.length <= 1 ? (
+              <p className="text-[10px] md:text-xs text-slate-400 text-center py-4">
+                Belum ada rute pengiriman. Klik rumah atau toko di peta untuk mulai menyusun rute.
+              </p>
+            ) : (
+              <div className="flex flex-col gap-2 py-0.5">
+                {legs.map((leg, index) => {
+                  const isToko = leg.nodeId === 'Toko';
+                  const isLast = index === legs.length - 1;
+                  return (
+                    <div key={index} className="relative flex items-start gap-2 sm:gap-3 pl-1">
+                      {/* Vertical Timeline Line */}
+                      {!isLast && (
+                        <span className="absolute left-[11px] sm:left-[13px] top-[20px] sm:top-[24px] bottom-[-18px] sm:bottom-[-20px] w-[1.5px] bg-slate-200" />
+                      )}
+
+                      {/* Number Bullet */}
+                      <div className={`w-[22px] h-[22px] sm:w-[26px] sm:h-[26px] rounded-full shrink-0 flex items-center justify-center text-[9px] md:text-[10px] font-black border z-10 font-display backdrop-blur-xs ${
+                        isToko
+                          ? 'bg-amber-100/50 border-amber-300/50 text-amber-800'
+                          : 'bg-indigo-50/50 border-indigo-200/50 text-indigo-800'
+                      }`}>
+                        {isToko ? '🥖' : index}
+                      </div>
+
+                      {/* Step Content */}
+                      <div className="flex-1 min-w-0 pt-0.5">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="text-[9.5px] md:text-[11px] font-bold text-slate-800 truncate">
+                            {isToko ? 'Toko Roti' : `Rumah ${leg.nodeId}`}
+                          </span>
+                          {leg.distanceToNext !== undefined && leg.distanceToNext > 0 && (
+                            <span className="text-[8px] md:text-[9px] font-extrabold text-indigo-600 bg-indigo-50/45 backdrop-blur-xs border border-indigo-100/60 px-1 sm:px-1.5 py-0.5 rounded-md shrink-0 font-mono">
+                              {formatDistance(leg.distanceToNext)}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Pan/zoom container */}
       <div
@@ -349,7 +476,33 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
             {/* ── WAYPOINTS ── */}
             {level.houses.filter(h => h.isWaypoint).map((house) => {
               const isInRoute = selectedRoute.includes(house.id);
+              const isLatest = selectedRoute[selectedRoute.length - 1] === house.id && !isDelivering;
               const wpNumber = house.id.replace('wp-', '');
+
+              // Priority: per-waypoint → level default → hardcoded
+              const hw = house.waypointColors;
+              const lw = level.defaultWaypointColors;
+              const colors = isLatest
+                ? {
+                    fill:   hw?.latest?.fill   ?? lw?.latest?.fill   ?? '#6366f1',
+                    stroke: hw?.latest?.stroke ?? lw?.latest?.stroke ?? '#4338ca',
+                    text:   hw?.latest?.text   ?? lw?.latest?.text   ?? '#ffffff',
+                    glow:   hw?.latest?.glow   ?? lw?.latest?.glow   ?? '#818cf8',
+                  }
+                : isInRoute
+                ? {
+                    fill:   hw?.visited?.fill   ?? lw?.visited?.fill   ?? '#10b981',
+                    stroke: hw?.visited?.stroke ?? lw?.visited?.stroke ?? '#059669',
+                    text:   hw?.visited?.text   ?? lw?.visited?.text   ?? '#ffffff',
+                    glow:   '',
+                  }
+                : {
+                    fill:   hw?.inactive?.fill   ?? lw?.inactive?.fill   ?? '#ffffff',
+                    stroke: hw?.inactive?.stroke ?? lw?.inactive?.stroke ?? '#64748b',
+                    text:   hw?.inactive?.text   ?? lw?.inactive?.text   ?? '#475569',
+                    glow:   '',
+                  };
+
               return (
                 <g
                   key={house.id}
@@ -359,13 +512,31 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
                   filter="url(#node-shadow)"
                 >
                   <circle r={22} fill="transparent" pointerEvents="all" cx="0" cy="0" style={{ cursor: 'pointer' }} />
-                  <circle cx="0" cy="0" r="8" fill={isInRoute ? '#10b981' : '#ffffff'} stroke={isInRoute ? '#059669' : '#64748b'} strokeWidth="1.8" />
+
+                  {/* Pulsing glow ring — only on the latest waypoint */}
+                  {isLatest && (
+                    <>
+                      <circle cx="0" cy="0" r="14" fill="none" stroke={colors.glow} strokeWidth="2" opacity="0.35" className="animate-ping" style={{ animationDuration: '2.5s' }} />
+                      <circle cx="0" cy="0" r="11" fill={colors.fill} opacity="0.12" />
+                    </>
+                  )}
+
+                  <circle
+                    cx="0" cy="0"
+                    r={isLatest ? 9.5 : 8}
+                    fill={colors.fill}
+                    stroke={colors.stroke}
+                    strokeWidth={isLatest ? 2.2 : 1.8}
+                    style={{ transition: 'all 0.3s ease' }}
+                  />
+
+                  {/* Number label — always show */}
                   <text
                     y="3"
                     textAnchor="middle"
                     fontSize="8.5"
                     fontWeight="black"
-                    fill={isInRoute ? '#ffffff' : '#475569'}
+                    fill={colors.text}
                   >
                     {wpNumber}
                   </text>
@@ -464,6 +635,86 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
           </svg>
         </div>
       </div>
+
+      {/* Floating Controls Overlay at the bottom */}
+      {isControlsExpanded ? (
+        <div className="absolute bottom-3 left-3 right-3 z-20 md:left-1/2 md:-translate-x-1/2 md:max-w-xl md:bg-white/50 md:backdrop-blur-md md:border border-slate-200/80 rounded-xl md:p-2.5 md:shadow-lg flex items-center justify-between gap-2 sm:gap-3 transition-all animate-fade-in">
+          {/* Speed selection */}
+          <div className="flex items-center gap-0.5 sm:gap-1 bg-slate-100/40 backdrop-blur-xs p-0.5 rounded-lg sm:rounded-xl border border-slate-200/65 shrink-0">
+            {[1, 2, 3].map((s) => (
+              <button
+                key={s}
+                type="button"
+                onClick={() => onChangeSpeed(s)}
+                className={`py-1 sm:py-1.5 px-2 sm:px-3 rounded-md sm:rounded-lg text-[8.5px] md:text-[11px] font-bold transition-all font-display ${
+                  deliverySpeed === s
+                    ? 'bg-[#0083C1] text-white shadow-xs'
+                    : 'text-slate-600 hover:bg-slate-200/60 active:scale-95'
+                }`}
+              >
+                {s}x
+              </button>
+            ))}
+          </div>
+
+          {/* Actions group */}
+          <div className="flex items-center gap-1 sm:gap-1.5 font-display tracking-wider bg-white/50 md:bg-transparent backdrop-blur-md md:backdrop-blur-none border md:border-none border-slate-200/80 rounded-xl shadow-sm md:shadow-none">
+            <button
+              onClick={onUndo}
+              disabled={selectedRoute.length <= 1 || isDelivering}
+              className="py-1.5 sm:py-2 px-2.5 sm:px-3 rounded-lg sm:rounded-xl font-bold text-[8.5px] md:text-[11px] text-slate-700 bg-slate-100/50 backdrop-blur-xs hover:bg-slate-200/70 border border-slate-300/80 active:scale-95 disabled:opacity-50 disabled:pointer-events-none transition flex items-center justify-center gap-1 font-display"
+            >
+              <SkipBack className="w-3.5 h-3.5 text-slate-600" />
+              <span className="hidden sm:inline">Hapus Terakhir</span>
+            </button>
+
+            <button
+              onClick={onReset}
+              disabled={selectedRoute.length <= 1 || isDelivering}
+              className="py-1.5 sm:py-2 px-2.5 sm:px-3 rounded-lg sm:rounded-xl font-bold text-[8.5px] md:text-[11px] text-slate-700 bg-slate-100/50 backdrop-blur-xs hover:bg-slate-200/70 border border-slate-300/80 active:scale-95 disabled:opacity-50 disabled:pointer-events-none transition flex items-center justify-center gap-1 font-display"
+            >
+              <RotateCcw className="w-3.5 h-3.5 text-slate-600" />
+              <span className="hidden sm:inline">Ulangi</span>
+            </button>
+
+            {isDelivering ? (
+              <button
+                onClick={onStopDeliver}
+                className="py-1.5 sm:py-2 px-3 sm:px-4 rounded-lg sm:rounded-xl font-bold text-[8.5px] md:text-[11px] text-white bg-rose-600 hover:bg-rose-700 active:scale-95 transition flex items-center justify-center gap-1.5 shadow-md shadow-rose-600/10 font-display"
+              >
+                <RotateCcw className="w-3.5 h-3.5 text-white" />
+                Berhenti
+              </button>
+            ) : (
+              <button
+                onClick={onDeliver}
+                disabled={selectedRoute.length <= 1}
+                className="py-1.5 sm:py-2 px-3 sm:px-4 rounded-lg sm:rounded-xl font-bold text-[8.5px] md:text-[11px] text-white bg-[#FC8C00] backdrop-blur-xs hover:bg-amber-600 active:scale-95 transition flex items-center justify-center gap-1.5 shadow-md shadow-amber-600/10 disabled:opacity-50 disabled:pointer-events-none font-display"
+              >
+                <Truck className="w-3.5 h-3.5 text-white" />
+                Berangkat
+              </button>
+            )}
+
+            {/* Collapse button */}
+            <button
+              onClick={() => setIsControlsExpanded(false)}
+              className="py-1.5 sm:py-2 px-1.5 sm:px-2.5 rounded-lg sm:rounded-xl font-bold text-xs text-slate-600 bg-slate-100/50 backdrop-blur-xs hover:bg-slate-200/70 border border-slate-300/80 active:scale-95 transition flex items-center justify-center gap-1"
+              title="Sembunyikan"
+            >
+              <ChevronDown className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
+      ) : (
+        <button
+          onClick={() => setIsControlsExpanded(true)}
+          className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 bg-white/70 backdrop-blur-md border border-slate-200/80 rounded-lg sm:rounded-xl px-1.5 md:px-2.5 py-1.5 md:py-2.5 shadow-lg hover:bg-white/85 active:scale-95 transition text-slate-700 font-bold text-[8.5px] md:text-[11px] flex items-center gap-1.5 animate-fade-in font-display tracking-wider"
+        >
+          <ChevronUp className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-indigo-600 animate-bounce" style={{ animationDuration: '1s' }} />
+          <span>Tampilkan Kontrol</span>
+        </button>
+      )}
     </div>
   );
 };

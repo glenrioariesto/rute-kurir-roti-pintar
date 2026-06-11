@@ -1,3 +1,16 @@
+export interface WaypointStateColors {
+  fill?: string;
+  stroke?: string;
+  text?: string;
+  glow?: string; // hanya dipakai untuk state 'latest'
+}
+
+export interface WaypointColors {
+  inactive?: WaypointStateColors;
+  visited?:  WaypointStateColors;
+  latest?:   WaypointStateColors;
+}
+
 export interface House {
   id: string;
   name: string;
@@ -11,6 +24,7 @@ export interface House {
   markerOffset?: { x?: number; y?: number }; // offset posisi marker image dari center
   radarColor?: string; // warna radar ping (default '#10b981')
   hideIcon?: boolean;   // sembunyikan icon emoji (🏠/🥖) di node
+  waypointColors?: WaypointColors; // override per-waypoint, prioritas tertinggi
 }
 
 export interface Connection {
@@ -38,6 +52,7 @@ export interface LevelConfig {
   timeLimitMinutes?: number; // Level 5 time constraint
   startTimeString?: string; // e.g., '07:00'
   motorSize?: number; // ukuran sprite motor kurir (default 48)
+  defaultWaypointColors?: WaypointColors; // default warna waypoint untuk seluruh level
   ctExplanation: {
     decomposition: string;
     patternRecognition: string;

@@ -21,9 +21,9 @@ export const CtExplanationPanel: React.FC<CtExplanationPanelProps> = ({ level })
           </div>
           <div>
             <h4 className="text-sm font-bold text-slate-800 leading-tight">
-              Pojok Computational Thinking (CT)
+              Pojok Berpikir Komputasional (CT)
             </h4>
-            <p className="text-[11px] text-slate-400">
+            <p className="text-[8.5px] md:text-[11px] text-slate-400">
               Bagaimana cara berpikir komputer membantumu mengirim roti otomatis?
             </p>
           </div>
@@ -45,9 +45,9 @@ export const CtExplanationPanel: React.FC<CtExplanationPanelProps> = ({ level })
               <span className="text-xl shrink-0 select-none">🧩</span>
               <div>
                 <h5 className="text-xs font-extrabold text-indigo-900 uppercase">
-                  1. Decomposition (Dekomposisi)
+                  1. Dekomposisi
                 </h5>
-                <p className="text-[11px] text-slate-600 mt-1 leading-relaxed">
+                <p className="text-[8.5px] md:text-[11px] text-slate-600 mt-1 leading-relaxed">
                   {level.ctExplanation.decomposition}
                 </p>
               </div>
@@ -58,9 +58,9 @@ export const CtExplanationPanel: React.FC<CtExplanationPanelProps> = ({ level })
               <span className="text-xl shrink-0 select-none">👁️</span>
               <div>
                 <h5 className="text-xs font-extrabold text-teal-900 uppercase">
-                  2. Pattern Recognition (Pengenalan Pola)
+                  2. Pengenalan Pola
                 </h5>
-                <p className="text-[11px] text-slate-600 mt-1 leading-relaxed">
+                <p className="text-[8.5px] md:text-[11px] text-slate-600 mt-1 leading-relaxed">
                   {level.ctExplanation.patternRecognition}
                 </p>
               </div>
@@ -71,9 +71,9 @@ export const CtExplanationPanel: React.FC<CtExplanationPanelProps> = ({ level })
               <span className="text-xl shrink-0 select-none">📐</span>
               <div>
                 <h5 className="text-xs font-extrabold text-pink-900 uppercase">
-                  3. Abstraction (Abstraksi)
+                  3. Abstraksi
                 </h5>
-                <p className="text-[11px] text-slate-600 mt-1 leading-relaxed">
+                <p className="text-[8.5px] md:text-[11px] text-slate-600 mt-1 leading-relaxed">
                   {level.ctExplanation.abstraction}
                 </p>
               </div>
@@ -84,9 +84,9 @@ export const CtExplanationPanel: React.FC<CtExplanationPanelProps> = ({ level })
               <span className="text-xl shrink-0 select-none">⛓️</span>
               <div>
                 <h5 className="text-xs font-extrabold text-amber-900 uppercase">
-                  4. Algorithm (Algoritma)
+                  4. Algoritma
                 </h5>
-                <p className="text-[11px] text-slate-600 mt-1 leading-relaxed">
+                <p className="text-[8.5px] md:text-[11px] text-slate-600 mt-1 leading-relaxed">
                   {level.ctExplanation.algorithm}
                 </p>
               </div>
@@ -100,12 +100,12 @@ export const CtExplanationPanel: React.FC<CtExplanationPanelProps> = ({ level })
             <div>
               <h5 className="text-xs font-bold text-slate-800 uppercase flex items-center gap-1.5">
                 <span>Penerapan di Dunia Nyata 🌍</span>
-                <span className="text-[10px] font-semibold text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded">
-                  Logistics & TSP
+                <span className="text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded text-[10px] font-semibold">
+                  Logistik & Optimasi Rute (TSP)
                 </span>
               </h5>
-              <p className="text-[11px] text-slate-600 leading-relaxed mt-1">
-                Tantangan yang kamu mainkan di game ini adalah perwujudan dari <strong>Travelling Salesperson Problem (TSP)</strong>. Konsep ini dipakai setiap hari oleh sistem logistik raksasa seperti <strong>Google Maps GPS</strong>, kargo kurir paket pos, pengantar pizza keliling, rute ojek online, dan optimasi jalur sirkuit mikrochip robotik demi menghemat bensin, meminimalkan emisi CO2, dan memotong biaya operasional!
+              <p className="text-[8.5px] md:text-[11px] text-slate-600 leading-relaxed mt-1">
+                Tantangan yang kamu mainkan di game ini adalah perwujudan dari <strong>Travelling Salesperson Problem (TSP / Masalah Penjual Keliling)</strong>. Konsep ini dipakai setiap hari oleh sistem logistik raksasa seperti <strong>Google Maps GPS</strong>, kargo kurir paket pos, pengantar pizza keliling, rute ojek online, dan optimasi jalur sirkuit mikrochip robotik demi menghemat bensin, meminimalkan emisi CO2, dan memotong biaya operasional!
               </p>
             </div>
           </div>

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { SplashPage } from '@pages/splash/SplashPage';
 import { DashboardPage } from '@pages/dashboard/DashboardPage';
 import { ArenaPage } from '@pages/arena/ArenaPage';
+import { PortraitWarning } from '@/components/shared/PortraitWarning';
 
 type Page = 'splash' | 'dashboard' | 'arena';
 
@@ -14,7 +15,12 @@ export default function App() {
     setPage('arena');
   };
 
-  if (page === 'splash') return <SplashPage onStart={() => setPage('dashboard')} />;
-  if (page === 'dashboard') return <DashboardPage onSelectLevel={handleSelectLevel} />;
-  return <ArenaPage initialLevelId={selectedLevelId} onBack={() => setPage('dashboard')} />;
+  return (
+    <>
+      {page === 'splash' && <SplashPage onStart={() => setPage('dashboard')} />}
+      {page === 'dashboard' && <DashboardPage onSelectLevel={handleSelectLevel} />}
+      {page === 'arena' && <ArenaPage initialLevelId={selectedLevelId} onBack={() => setPage('dashboard')} />}
+      <PortraitWarning />
+    </>
+  );
 }
