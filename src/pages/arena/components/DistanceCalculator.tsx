@@ -30,7 +30,7 @@ export const DistanceCalculator: React.FC<DistanceCalculatorProps> = ({
           <div>
             <span className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Rute Kamu</span>
             <p className="text-2xl font-extrabold text-slate-700 font-mono mt-1">
-              {currentRoute.length > 1 ? `${currentDistance} km` : '--'}
+              {currentRoute.length > 1 ? `${currentDistance} m` : '--'}
             </p>
           </div>
           <p className="text-xs text-slate-500 mt-2">
@@ -43,7 +43,7 @@ export const DistanceCalculator: React.FC<DistanceCalculatorProps> = ({
           <div>
             <span className="text-[10px] uppercase tracking-wider text-amber-500 font-semibold text-shadow-sm">Rute Terbaik</span>
             <p className="text-2xl font-extrabold text-amber-700 font-mono mt-1">
-              {optimalDistance} km
+              {optimalDistance} m
             </p>
           </div>
           <p className="text-xs text-amber-600 mt-2">
@@ -66,16 +66,16 @@ export const DistanceCalculator: React.FC<DistanceCalculatorProps> = ({
                   : 'text-rose-600'
               }`}
             >
-              {!isCompletedRoute ? '--' : isOptimal ? '0 km (Optimal!)' : `+${diff} km`}
+              {!isCompletedRoute ? '--' : isOptimal ? '0 m (Optimal!)' : `+${diff} m`}
             </p>
           </div>
           <div className="mt-2 text-xs">
             {!isCompletedRoute ? (
               <span className="text-slate-400">Hubungkan semua rumah untuk mengukur selisih.</span>
             ) : isOptimal ? (
-              <span className="text-emerald-700 font-semibold">Selamat! Anda menghemat bensin maksimal! 🌟</span>
+              <span className="text-emerald-700 font-semibold">Selamat! Anda menemukan rute terpendek yang sempurna! 🌟</span>
             ) : (
-              <span className="text-slate-600 font-medium">Bisa dihemat {diff} km lagi. Coba atur urutan rutenya!</span>
+              <span className="text-slate-600 font-medium">Bisa dihemat {diff} m lagi. Coba atur urutan rutenya!</span>
             )}
           </div>
         </div>

@@ -18,10 +18,10 @@ export function ArenaPage({ initialLevelId, onBack }: ArenaPageProps) {
   const currentLevel = levels.find((l) => l.id === selectedLevelId) || levels[0];
 
   const {
-    selectedRoute, isDelivering, showResult, setShowResult,
+    selectedRoute, segmentLengths, isDelivering, showResult, setShowResult,
     score, feedback, errorToast, optimal, currentMetrics,
     handleHouseClick, handleUndo, handleReset, handleDeliver,
-    getCourierPosition, attempts, animationStep,
+    getCourierPosition, attempts, animationStep, deliverySpeed, setDeliverySpeed,
   } = useRouteGame(currentLevel);
 
   const handleNextLevel = () => {
@@ -37,6 +37,7 @@ export function ArenaPage({ initialLevelId, onBack }: ArenaPageProps) {
           <MapCanvas
             level={currentLevel}
             selectedRoute={selectedRoute}
+            segmentLengths={segmentLengths}
             isDelivering={isDelivering}
             animationStep={animationStep}
             courierPos={getCourierPosition()}
@@ -71,6 +72,8 @@ export function ArenaPage({ initialLevelId, onBack }: ArenaPageProps) {
             onUndo={handleUndo}
             onReset={handleReset}
             onDeliver={handleDeliver}
+            deliverySpeed={deliverySpeed}
+            onChangeSpeed={setDeliverySpeed}
           />
         </div>
 
@@ -95,6 +98,8 @@ export function ArenaPage({ initialLevelId, onBack }: ArenaPageProps) {
                 onUndo={handleUndo}
                 onReset={handleReset}
                 onDeliver={handleDeliver}
+                deliverySpeed={deliverySpeed}
+                onChangeSpeed={setDeliverySpeed}
               />
             </div>
           </div>
@@ -114,6 +119,8 @@ export function ArenaPage({ initialLevelId, onBack }: ArenaPageProps) {
         onNextLevel={() => { setShowResult(false); handleNextLevel(); }}
         hasNextLevel={selectedLevelId < levels.length}
       />
+
+
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Award, RefreshCcw, ArrowRight, X, Sparkles, AlertTriangle } from 'lucide-react';
+import { formatTime } from '@utils/findOptimalRoute';
 
 interface ResultModalProps {
   isOpen: boolean;
@@ -74,12 +75,12 @@ export const ResultModal: React.FC<ResultModalProps> = ({
           <div className="grid grid-cols-2 gap-3 bg-slate-50 p-3.5 rounded-2xl border border-slate-150">
             <div className="text-center border-r border-slate-200">
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Rute Anda</span>
-              <p className="text-lg font-extrabold text-slate-700 font-mono mt-0.5">{distance} km</p>
-              <p className="text-[10px] text-slate-500 font-mono mt-0.5">({time} menit)</p>
+              <p className="text-lg font-extrabold text-slate-700 font-mono mt-0.5">{distance} m</p>
+              <p className="text-[10px] text-slate-500 font-mono mt-0.5">({formatTime(time)})</p>
             </div>
             <div className="text-center">
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Rute Optimal</span>
-              <p className="text-lg font-extrabold text-amber-600 font-mono mt-0.5">{optimalDistance} km</p>
+              <p className="text-lg font-extrabold text-amber-600 font-mono mt-0.5">{optimalDistance} m</p>
               <p className="text-[10px] text-slate-400 mt-0.5">Teoritis Terpendek</p>
             </div>
           </div>

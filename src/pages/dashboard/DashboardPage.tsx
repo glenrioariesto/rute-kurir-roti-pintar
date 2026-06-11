@@ -1,4 +1,4 @@
-import { Truck, Award, ChevronRight, Sparkles, Clock, Fuel } from 'lucide-react';
+import { Truck, Award, ChevronRight, Sparkles, Clock } from 'lucide-react';
 import { levels } from '@/levels';
 
 interface DashboardPageProps {
@@ -79,11 +79,6 @@ export function DashboardPage({ onSelectLevel }: DashboardPageProps) {
 
                   <div className="flex items-center gap-2 text-[10px] text-slate-400 font-medium mt-auto">
                     <span className="flex items-center gap-0.5">🏠 {houseCount} rumah</span>
-                    {level.maxFuel && (
-                      <span className="flex items-center gap-0.5">
-                        <Fuel className="w-2.5 h-2.5" /> {level.maxFuel}km
-                      </span>
-                    )}
                     {level.timeLimitMinutes && (
                       <span className="flex items-center gap-0.5">
                         <Clock className="w-2.5 h-2.5" /> {level.timeLimitMinutes}m

@@ -2,7 +2,7 @@ import { LevelConfig, Connection } from '@/types';
 
 export function calculateRouteMetrics(route: string[], level: LevelConfig) {
   if (route.length < 2) {
-    return { distance: 0, time: 0, fuel: 0, isValid: true };
+    return { distance: 0, time: 0, isValid: true };
   }
 
   let totalDistance = 0;
@@ -17,15 +17,21 @@ export function calculateRouteMetrics(route: string[], level: LevelConfig) {
         !c.isBlockedByLevel
     );
 
-    if (!conn) return { distance: 0, time: 0, fuel: 0, isValid: false };
+    if (!conn) return { distance: 0, time: 0, isValid: false };
 
     totalDistance += conn.distance;
   }
 
+  // Check for immediate backtracking (X -> Y -> X)
+  for (let i = 0; i < route.length - 2; i++) {
+    if (route[i] === route[i + 2]) {
+      return { distance: 0, time: 0, isValid: false };
+    }
+  }
+
   return {
     distance: totalDistance,
-    time: Math.round(totalDistance * 3 * 10) / 10,
-    fuel: totalDistance,
+    time: Math.round(totalDistance * 0.5 * 10) / 10,
     isValid: true,
   };
 }
@@ -34,7 +40,9 @@ export function calculateRouteMetrics(route: string[], level: LevelConfig) {
  * Helper to check if a route visits all houses in a level.
  */
 export function visitsAllHouses(route: string[], level: LevelConfig): boolean {
-  const targetIds = level.houses.filter((h) => h.id !== 'Toko').map((h) => h.id);
+  const targetIds = level.houses
+    .filter((h) => h.id !== 'Toko' && !h.isWaypoint)
+    .map((h) => h.id);
   const routeSet = new Set(route.filter((id) => id !== 'Toko'));
   return targetIds.every((id) => routeSet.has(id));
 }
@@ -44,64 +52,95 @@ export function visitsAllHouses(route: string[], level: LevelConfig): boolean {
  * all houses in the level at least once. It respects blocked connections.
  */
 export function findOptimalRoute(level: LevelConfig): { route: string[]; distance: number; time: number } {
-  const housesToVisit = level.houses.map((h) => h.id).filter((id) => id !== 'Toko');
-  const allNodes = level.houses.map((h) => h.id);
-  const isLinear = !!level.linear;
+  const targetHouses = level.houses
+    .filter((h) => h.id !== 'Toko' && !h.isWaypoint)
+    .map((h) => h.id);
 
-  const adj: { [key: string]: { node: string; distance: number }[] } = {};
-  allNodes.forEach((id) => { adj[id] = []; });
-  level.connections.forEach((conn) => {
-    if (conn.isBlockedByLevel) return;
-    adj[conn.from].push({ node: conn.to, distance: conn.distance });
-    adj[conn.to].push({ node: conn.from, distance: conn.distance });
-  });
+  const adj: Record<string, { to: string; distance: number }[]> = {};
+  for (const h of level.houses) {
+    adj[h.id] = [];
+  }
+  for (const c of level.connections) {
+    if (c.isBlockedByLevel) continue;
+    adj[c.from].push({ to: c.to, distance: c.distance });
+    adj[c.to].push({ to: c.from, distance: c.distance });
+  }
 
   let bestRoute: string[] = [];
   let minDistance = Infinity;
-  const maxPathLength = level.houses.length * 2;
 
-  function search(currNode: string, path: string[], currentDistance: number) {
-    if (currentDistance >= minDistance) return;
+  const memo = new Map<string, number>();
 
-    const visitedRequired = housesToVisit.every((id) => path.includes(id));
+  function search(
+    curr: string,
+    prev: string | null,
+    visitedMask: number,
+    dist: number,
+    path: string[]
+  ) {
+    if (dist >= minDistance) return;
+    if (path.length > 40) return; // safety depth limit
 
-    if (isLinear) {
-      // Linear: selesai saat semua rumah dikunjungi, tidak perlu balik ke Toko
-      if (visitedRequired && currNode !== 'Toko') {
-        minDistance = currentDistance;
+    const stateKey = `${curr}_${prev || 'none'}_${visitedMask}`;
+    const existing = memo.get(stateKey);
+    if (existing !== undefined && dist >= existing) {
+      return;
+    }
+    memo.set(stateKey, dist);
+
+    if (curr === 'Toko' && visitedMask === (1 << targetHouses.length) - 1) {
+      if (dist < minDistance) {
+        minDistance = dist;
         bestRoute = [...path];
-        return;
       }
-    } else {
-      if (currNode === 'Toko' && path.length > 1 && visitedRequired) {
-        minDistance = currentDistance;
-        bestRoute = [...path];
-        return;
-      }
+      return;
     }
 
-    if (path.length >= maxPathLength) return;
+    const neighbors = adj[curr] || [];
+    for (const edge of neighbors) {
+      const nextNode = edge.to;
+      if (nextNode === prev) continue;
 
-    for (const neighbor of (adj[currNode] || [])) {
-      if (path.length >= 2 && path[path.length - 2] === neighbor.node) {
-        const currentUnvisited = housesToVisit.filter(id => !path.includes(id));
-        if (currentUnvisited.length === 0 && neighbor.node !== 'Toko') continue;
+      const houseIndex = targetHouses.indexOf(nextNode);
+      let nextMask = visitedMask;
+      if (houseIndex !== -1) {
+        nextMask |= (1 << houseIndex);
       }
-      const visitCount = path.filter(x => x === neighbor.node).length;
-      if (visitCount > 2) continue;
-      path.push(neighbor.node);
-      search(neighbor.node, path, currentDistance + neighbor.distance);
+
+      path.push(nextNode);
+      search(nextNode, curr, nextMask, dist + edge.distance, path);
       path.pop();
     }
   }
 
-  search('Toko', ['Toko'], 0);
+  search('Toko', null, 0, 0, ['Toko']);
 
-  if (bestRoute.length === 0) {
-    const dummy = ['Toko', ...housesToVisit, ...(isLinear ? [] : ['Toko'])];
+  if (minDistance === Infinity) {
+    const dummy = ['Toko', ...targetHouses, 'Toko'];
     return { route: dummy, distance: 99, time: 99 };
   }
 
-  const metrics = calculateRouteMetrics(bestRoute, level);
-  return { route: bestRoute, distance: metrics.distance, time: metrics.time };
+  const time = Math.round(minDistance * 0.5 * 10) / 10;
+  return { route: bestRoute, distance: minDistance, time };
+}
+
+export function formatTime(minutes: number): string {
+  const totalSeconds = Math.round(minutes * 60);
+  const hrs = Math.floor(totalSeconds / 3600);
+  const mins = Math.floor((totalSeconds % 3600) / 60);
+  const secs = totalSeconds % 60;
+
+  if (hrs > 0) {
+    const hrStr = `${hrs} jam`;
+    const minStr = mins > 0 ? ` ${mins} menit` : '';
+    const secStr = secs > 0 ? ` ${secs} detik` : '';
+    return `${hrStr}${minStr}${secStr}`;
+  } else {
+    const minStr = mins > 0 ? `${mins} menit` : '';
+    const secStr = secs > 0 ? `${secs} detik` : '';
+    if (minStr && secStr) return `${minStr} ${secStr}`;
+    if (minStr) return minStr;
+    if (secStr) return secStr;
+    return '0 detik';
+  }
 }

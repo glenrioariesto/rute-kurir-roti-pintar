@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { LevelConfig } from '@/types';
-import { calculateRouteMetrics, findOptimalRoute, visitsAllHouses } from '@utils/findOptimalRoute';
+import { calculateRouteMetrics, findOptimalRoute, visitsAllHouses, formatTime } from '@utils/findOptimalRoute';
 
 export function useRouteGame(level: LevelConfig) {
   const [selectedRoute, setSelectedRoute] = useState<string[]>(['Toko']);
+  const [segmentLengths, setSegmentLengths] = useState<number[]>([]);
   const [isDelivering, setIsDelivering] = useState(false);
+  const [deliverySpeed, setDeliverySpeed] = useState<number>(1);
   const [animationStep, setAnimationStep] = useState(0);
   const [animationProgress, setAnimationProgress] = useState(0);
   const [showResult, setShowResult] = useState(false);
@@ -14,6 +16,8 @@ export function useRouteGame(level: LevelConfig) {
   const [attempts, setAttempts] = useState<{
     route: string[]; distance: number; time: number; score: number; isValid: boolean;
   }[]>([]);
+
+
 
   // Refs untuk animasi — hindari stale closure
   const stepRef      = useRef(0);
@@ -25,6 +29,7 @@ export function useRouteGame(level: LevelConfig) {
   useEffect(() => {
     setSelectedRoute(['Toko']);
     routeRef.current = ['Toko'];
+    setSegmentLengths([]);
     setIsDelivering(false);
     deliveringRef.current = false;
     setShowResult(false);
@@ -41,39 +46,58 @@ export function useRouteGame(level: LevelConfig) {
     const lastNode = selectedRoute[selectedRoute.length - 1];
 
     if (houseId === 'Toko' && selectedRoute.length === 1) return;
-    if (level.linear && houseId === 'Toko') return;
 
-    if (selectedRoute.length >= 2 && selectedRoute[selectedRoute.length - 2] === houseId) {
+    // Cari node non-waypoint sebelumnya untuk fitur click-undo
+    let prevNonWpNode: string | null = null;
+    if (segmentLengths.length > 0) {
+      const prevIndex = selectedRoute.length - 1 - segmentLengths[segmentLengths.length - 1];
+      if (prevIndex >= 0) prevNonWpNode = selectedRoute[prevIndex];
+    }
+    if (prevNonWpNode && houseId === prevNonWpNode) {
       handleUndo();
       return;
     }
 
-    const findPath = (from: string, to: string): string[] | null => {
-      const direct = level.connections.find(
-        (c) => ((c.from === from && c.to === to) || (c.from === to && c.to === from)) && !c.isBlockedByLevel
-      );
-      if (direct) return [to];
-
-      const waypointNodes = level.houses.filter(h => h.isWaypoint).map(h => h.id);
-      for (const wp of waypointNodes) {
-        const leg1 = level.connections.find(
-          (c) => ((c.from === from && c.to === wp) || (c.from === wp && c.to === from)) && !c.isBlockedByLevel
-        );
-        const leg2 = level.connections.find(
-          (c) => ((c.from === wp && c.to === to) || (c.from === to && c.to === wp)) && !c.isBlockedByLevel
-        );
-        if (leg1 && leg2) return [wp, to];
+    // DFS pathfinding to find all paths using only waypoints as transit nodes
+    const findAllPaths = (from: string, to: string): string[][] => {
+      const adj: Record<string, string[]> = {};
+      for (const h of level.houses) {
+        adj[h.id] = [];
       }
-      return null;
+      for (const c of level.connections) {
+        if (c.isBlockedByLevel) continue;
+        adj[c.from]?.push(c.to);
+        adj[c.to]?.push(c.from);
+      }
+
+      const predecessor = selectedRoute.length >= 2 ? selectedRoute[selectedRoute.length - 2] : null;
+
+      const paths: string[][] = [];
+      const dfs = (node: string, currentPath: string[], visited: Set<string>) => {
+        if (node === to) {
+          paths.push([...currentPath]);
+          return;
+        }
+
+        for (const neighbor of (adj[node] || [])) {
+          if (visited.has(neighbor)) continue;
+
+          // No immediate backtracking rule:
+          // If this is the first step of the path, we cannot go back to the predecessor
+          if (node === from && neighbor === predecessor) continue;
+
+          const neighborHouse = level.houses.find(h => h.id === neighbor);
+          if (neighborHouse?.isWaypoint || neighbor === to) {
+            visited.add(neighbor);
+            dfs(neighbor, [...currentPath, neighbor], visited);
+            visited.delete(neighbor);
+          }
+        }
+      };
+
+      dfs(from, [], new Set<string>([from]));
+      return paths;
     };
-
-    const path = findPath(lastNode, houseId);
-
-    if (!path) {
-      setErrorToast(`❌ Tidak ada jalan dari ${lastNode} ke ${houseId}! Silakan ikuti jalur bergaris.`);
-      setTimeout(() => setErrorToast(null), 3000);
-      return;
-    }
 
     if (lastNode === 'Toko' && selectedRoute.length > 1) {
       setErrorToast('🔒 Rute sudah ditutup kembali ke Toko Roti. Sila klik "Kirim" atau "Reset"!');
@@ -81,18 +105,48 @@ export function useRouteGame(level: LevelConfig) {
       return;
     }
 
+    const allPaths = findAllPaths(lastNode, houseId);
+
+    if (allPaths.length === 0) {
+      const lastHouse = level.houses.find(h => h.id === lastNode);
+      const targetHouse = level.houses.find(h => h.id === houseId);
+      const lastDisplayName = lastHouse?.isWaypoint ? lastHouse.name : lastNode === 'Toko' ? 'Toko Roti' : `Rumah ${lastNode}`;
+      const targetDisplayName = targetHouse?.isWaypoint ? targetHouse.name : houseId === 'Toko' ? 'Toko Roti' : `Rumah ${houseId}`;
+      setErrorToast(`❌ Tidak ada jalan dari ${lastDisplayName} ke ${targetDisplayName}! Silakan ikuti jalur bergaris.`);
+      setTimeout(() => setErrorToast(null), 3000);
+      return;
+    }
+
+    let path = allPaths[0];
+
+    if (allPaths.length > 1) {
+      // Jika salah satu rute adalah koneksi langsung (panjang path = 1), gunakan koneksi langsung tersebut.
+      // Ini mencegah error "Ada 2 rute" ketika berpindah dari rumah ke waypoint tetangga terdekatnya.
+      const directPath = allPaths.find(p => p.length === 1);
+      if (directPath) {
+        path = directPath;
+      } else {
+        const targetHouse = level.houses.find(h => h.id === houseId);
+        const displayName = targetHouse?.isWaypoint ? targetHouse.name : houseId === 'Toko' ? 'Toko Roti' : `Rumah ${houseId}`;
+        setErrorToast(`⚠️ Ada 2 rute ke ${displayName}. Pilih jalur dengan mengeklik titik bulat (waypoint) di peta!`);
+        setTimeout(() => setErrorToast(null), 4000);
+        return;
+      }
+    }
     const newRoute = [...selectedRoute, ...path];
     setSelectedRoute(newRoute);
     routeRef.current = newRoute;
+    setSegmentLengths(prev => [...prev, path.length]);
   };
 
   const handleUndo = () => {
     if (isDelivering || showResult) return;
-    if (selectedRoute.length > 1) {
-      const copy = [...selectedRoute];
-      copy.pop();
+    if (selectedRoute.length > 1 && segmentLengths.length > 0) {
+      const lastSegLen = segmentLengths[segmentLengths.length - 1];
+      const copy = selectedRoute.slice(0, selectedRoute.length - lastSegLen);
       setSelectedRoute(copy);
       routeRef.current = copy;
+      setSegmentLengths(prev => prev.slice(0, -1));
     }
   };
 
@@ -100,6 +154,7 @@ export function useRouteGame(level: LevelConfig) {
     if (isDelivering) return;
     setSelectedRoute(['Toko']);
     routeRef.current = ['Toko'];
+    setSegmentLengths([]);
     setShowResult(false);
     setScore(0);
     setFeedback('');
@@ -112,7 +167,7 @@ export function useRouteGame(level: LevelConfig) {
       return;
     }
 
-    if (!level.linear && selectedRoute[selectedRoute.length - 1] !== 'Toko') {
+    if (selectedRoute[selectedRoute.length - 1] !== 'Toko') {
       setErrorToast('🥖 Jangan lupa selesaikan rute dengan mengeklik "Toko Roti" kembali di akhir!');
       setTimeout(() => setErrorToast(null), 3500);
       return;
@@ -145,7 +200,7 @@ export function useRouteGame(level: LevelConfig) {
     const timer = setInterval(() => {
       if (pausedRef.current) return;
 
-      progressRef.current += 4;
+      progressRef.current += 4 * deliverySpeed;
 
       if (progressRef.current >= 100) {
         progressRef.current = 100;
@@ -160,14 +215,14 @@ export function useRouteGame(level: LevelConfig) {
             setAnimationStep(stepRef.current);
             setAnimationProgress(0);
             pausedRef.current = false;
-          }, 600);
+          }, 600 / deliverySpeed);
         } else {
           clearInterval(timer);
           setTimeout(() => {
             deliveringRef.current = false;
             setIsDelivering(false);
             calculateFinalScore();
-          }, 800);
+          }, 800 / deliverySpeed);
         }
       } else {
         setAnimationProgress(progressRef.current);
@@ -175,12 +230,12 @@ export function useRouteGame(level: LevelConfig) {
     }, 50);
 
     return () => clearInterval(timer);
-  }, [isDelivering]);
+  }, [isDelivering, deliverySpeed]);
 
   const calculateFinalScore = () => {
     const route = routeRef.current;
     const routeVisitedAll = visitsAllHouses(route, level);
-    const endsAtToko = level.linear || route[route.length - 1] === 'Toko';
+    const endsAtToko = route[route.length - 1] === 'Toko';
 
     if (!routeVisitedAll) {
       setScore(0);
@@ -200,16 +255,9 @@ export function useRouteGame(level: LevelConfig) {
     const distance = metrics.distance;
     const time = metrics.time;
 
-    if (level.maxFuel && distance > level.maxFuel) {
-      setScore(50);
-      setFeedback(`Bensin tidak cukup (Maksimal ${level.maxFuel} km). Jarak tempuh: ${distance} km!`);
-      setShowResult(true);
-      return;
-    }
-
     if (level.timeLimitMinutes && time > level.timeLimitMinutes) {
       setScore(50);
-      setFeedback(`Waktu melebihi batas (${time} menit). Roti terlambat sampai!`);
+      setFeedback(`Waktu melebihi batas (${formatTime(time)}). Roti terlambat sampai!`);
       setShowResult(true);
       return;
     }
@@ -223,10 +271,10 @@ export function useRouteGame(level: LevelConfig) {
       finalFeedback = 'Hebat! Kamu menemukan rute terpendek yang sempurna! ⭐';
     } else if (diff <= 2.1) {
       finalScore = 80;
-      finalFeedback = `Hampir sempurna! Selisih ${diff} km dari rute terbaik. Coba lagi!`;
+      finalFeedback = `Hampir sempurna! Selisih ${diff} m dari rute terbaik. Coba lagi!`;
     } else {
       finalScore = 60;
-      finalFeedback = 'Coba kunjungi rumah-rumah terdekat secara berurutan agar lebih hemat km!';
+      finalFeedback = 'Coba kunjungi rumah-rumah terdekat secara berurutan agar lebih hemat m!';
     }
 
     setScore(finalScore);
@@ -258,6 +306,7 @@ export function useRouteGame(level: LevelConfig) {
 
   return {
     selectedRoute,
+    segmentLengths,
     isDelivering,
     animationStep,
     animationProgress,
@@ -274,5 +323,7 @@ export function useRouteGame(level: LevelConfig) {
     handleDeliver,
     getCourierPosition,
     attempts,
+    deliverySpeed,
+    setDeliverySpeed,
   };
 }
