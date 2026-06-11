@@ -415,6 +415,14 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
                 .animate-marker-bounce {
                   animation: markerBounce 0.8s infinite ease-in-out;
                 }
+                @keyframes radarPing {
+                  0% { transform: scale(0.25); opacity: 0.95; }
+                  100% { transform: scale(1.6); opacity: 0; }
+                }
+                .animate-radar-ping {
+                  animation: radarPing 0.8s infinite cubic-bezier(0.1, 0.8, 0.3, 1);
+                  transform-origin: 0px 0px;
+                }
               `}
             </style>
 
@@ -568,9 +576,7 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
               return (
                 <g transform={`translate(${courierPos.x},${courierPos.y})`}
                   style={{ transition: 'transform 50ms linear' }}>
-                  {/* Scan / Ping Animation */}
-                  <circle r={mHalf + 10} fill="transparent" stroke="#3b82f6" strokeWidth="2"
-                    className="animate-ping" style={{ animationDuration: '2s' }} />
+
                   <image
                     href={getMotorAsset()}
                     x={-mHalf} y={-mHalf}
@@ -591,6 +597,8 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
               const mHalf     = mSize / 2;
               const ox        = house.markerOffset?.x ?? 0;
               const oy        = house.markerOffset?.y ?? 0;
+              const rox       = house.radarOffset?.x ?? 0;
+              const roy       = house.radarOffset?.y ?? 0;
 
               const cleanPath = (p: string) => p.startsWith('/assets/') ? p.replace('/assets/', '/') : p;
               const originalIndex = level.houses.findIndex(h => h.id === house.id);
@@ -606,12 +614,20 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
               return (
                 <g key={house.id} transform={`translate(${house.x},${house.y})`} onClick={(e) => handleNodeClick(house.id, e)} style={{ cursor: 'pointer' }} filter="url(#node-shadow)">
                   <circle r={isToko ? 45 : 30} fill="transparent" pointerEvents="all" cx={ox} cy={isToko ? oy + 18 : oy} style={{ cursor: 'pointer' }} />
-                  {isLatest && !isDelivering && (
-                    <g transform={`translate(${isToko ? 0 : ox},${isToko ? 0 : oy})`}>
-                      <circle r={isToko ? 36 : mHalf + 10} fill="none" stroke={house.radarColor ?? '#10b981'} strokeWidth="2" className="animate-ping" style={{ animationDuration: '2s' }} />
-                    </g>
-                  )}
                   <g className={isLatest && !isDelivering ? 'animate-marker-bounce' : ''}>
+                    {isLatest && !isDelivering && (
+                      <g transform={`translate(${ox + rox},${oy + roy})`}>
+                        <circle
+                          cx="0"
+                          cy="0"
+                          r={isToko ? 36 : mHalf + 10}
+                          fill="none"
+                          stroke={house.radarColor ?? '#10b981'}
+                          strokeWidth="2.5"
+                          className="animate-radar-ping"
+                        />
+                      </g>
+                    )}
                     <image href={markerSrc} x={-mHalf + ox} y={-mHalf + oy} width={mSize} height={mSize} preserveAspectRatio="xMidYMid meet" style={{ pointerEvents: 'auto', opacity: 1.0, filter: 'none', transition: 'all 0.3s ease' }} />
                     {isInRoute && !isToko && (() => {
                       const visitCount = selectedRoute.filter(id => id === house.id).length;

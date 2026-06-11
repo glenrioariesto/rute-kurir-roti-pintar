@@ -22,6 +22,7 @@ export interface House {
   markerImage?: string; // path gambar marker custom (misal '/point-a.webp'), mengganti circle+icon default
   markerSize?: number;  // ukuran marker custom (default 48)
   markerOffset?: { x?: number; y?: number }; // offset posisi marker image dari center
+  radarOffset?: { x?: number; y?: number };  // offset posisi radar dari center marker
   radarColor?: string; // warna radar ping (default '#10b981')
   hideIcon?: boolean;   // sembunyikan icon emoji (🏠/🥖) di node
   waypointColors?: WaypointColors; // override per-waypoint, prioritas tertinggi
