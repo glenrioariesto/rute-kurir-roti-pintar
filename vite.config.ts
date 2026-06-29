@@ -5,6 +5,7 @@ import {defineConfig} from 'vite';
 
 export default defineConfig(() => {
   return {
+    base: '/rute-kurir-roti-pintar/',
     plugins: [react(), tailwindcss()],
     publicDir: 'assets',
     resolve: {
