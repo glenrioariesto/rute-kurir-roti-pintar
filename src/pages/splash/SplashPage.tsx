@@ -1,5 +1,5 @@
 import { Sparkles, ChevronRight } from 'lucide-react';
-import logoPusbuk from '/assets/logo-pusbuk.webp';
+import logoPusbuk from '../../../assets/logo-pusbuk.webp';
 
 interface SplashPageProps {
   onStart: () => void;

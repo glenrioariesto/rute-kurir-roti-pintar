@@ -1,6 +1,6 @@
 import { Truck, Award, ChevronRight, Sparkles, Clock } from 'lucide-react';
 import { levels } from '@/levels';
-import logoPusbuk from '/assets/logo-pusbuk.webp';
+import logoPusbuk from '../../../assets/logo-pusbuk.webp';
 
 interface DashboardPageProps {
   onSelectLevel: (id: number) => void;
