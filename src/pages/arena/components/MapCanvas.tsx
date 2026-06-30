@@ -21,15 +21,16 @@ interface MapCanvasProps {
   currentMetrics: { distance: number; time: number; isValid: boolean };
 }
 
+const BASE = import.meta.env.BASE_URL;
 const ASSETS = {
-  canvasBg: '/Background.webp',
-  house:  '/assets/house.png',
-  store:  '/assets/store.png',
-  mapBg:  '/map-level-1-baru.webp',
-  motorDiagKananAtas:  '/motor-kanan-atas.webp',
-  motorDiagKananBawah: '/motor-kanan-bawah.webp',
-  motorDiagKiriAtas:   '/motor-kiri-atas.webp',
-  motorDiagKiriBawah:  '/motor-kiri-bawah.webp',
+  canvasBg: `${BASE}Background.webp`,
+  house:  `${BASE}house.png`,
+  store:  `${BASE}store.png`,
+  mapBg:  `${BASE}map-level-1-baru.webp`,
+  motorDiagKananAtas:  `${BASE}motor-kanan-atas.webp`,
+  motorDiagKananBawah: `${BASE}motor-kanan-bawah.webp`,
+  motorDiagKiriAtas:   `${BASE}motor-kiri-atas.webp`,
+  motorDiagKiriBawah:  `${BASE}motor-kiri-bawah.webp`,
 };
 
 interface Transform { x: number; y: number; scale: number; }
@@ -600,14 +601,13 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
               const rox       = house.radarOffset?.x ?? 0;
               const roy       = house.radarOffset?.y ?? 0;
 
-              const cleanPath = (p: string) => p.startsWith('/assets/') ? p.replace('/assets/', '/') : p;
               const originalIndex = level.houses.findIndex(h => h.id === house.id);
               const getMarkerSrc = () => {
-                if (isToko) return '/point-roti.webp';
-                if (house.markerImage) return cleanPath(house.markerImage);
+                if (isToko) return `${BASE}point-roti.webp`;
+                if (house.markerImage) return house.markerImage;
                 const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
                 const letter = letters[originalIndex - 1] || 'a';
-                return `/point-${letter}.webp`;
+                return `${BASE}point-${letter}.webp`;
               };
 
               const markerSrc = getMarkerSrc();

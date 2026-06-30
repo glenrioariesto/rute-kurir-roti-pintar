@@ -1,5 +1,6 @@
 import { Truck, Award, ChevronRight, Sparkles, Clock } from 'lucide-react';
 import { levels } from '@/levels';
+import logoPusbuk from '/assets/logo-pusbuk.webp';
 
 interface DashboardPageProps {
   onSelectLevel: (id: number) => void;
@@ -19,7 +20,7 @@ export function DashboardPage({ onSelectLevel }: DashboardPageProps) {
       <header className="bg-white border-b border-slate-100 px-4 py-2.5 shrink-0 shadow-sm">
         <div className="max-w-4xl mx-auto flex items-center gap-2.5">
           <img 
-            src="/logo-pusbuk.webp" 
+            src={logoPusbuk} 
             alt="Logo Pusbuk" 
             className="h-7 w-auto object-contain shrink-0"
           />

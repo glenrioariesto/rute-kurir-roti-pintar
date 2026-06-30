@@ -1,4 +1,5 @@
 import { Sparkles, ChevronRight } from 'lucide-react';
+import logoPusbuk from '/assets/logo-pusbuk.webp';
 
 interface SplashPageProps {
   onStart: () => void;
@@ -11,7 +12,7 @@ export function SplashPage({ onStart }: SplashPageProps) {
       {/* Logo */}
       <div className="px-4 py-2 shrink-0">
         <img 
-          src="/logo-pusbuk.webp" 
+          src={logoPusbuk} 
           alt="Logo Pusbuk" 
           className="h-8 w-auto object-contain"
         />
