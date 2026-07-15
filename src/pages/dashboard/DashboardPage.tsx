@@ -155,7 +155,7 @@ export function DashboardPage({ onSelectLevel, isSoundOn, onToggleSound, onPlayC
                   <div className="mt-auto shrink-0">
                     <div className="flex flex-wrap gap-1 sm:gap-1.5 mb-3 sm:mb-4">
                       <span className="inline-flex items-center gap-1 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-lg sm:rounded-xl bg-slate-50 text-slate-600 font-bold text-[8px] sm:text-[9px] md:text-[10px] border border-slate-100">
-                        🏠 {housesOnlyCount} Rumah + 🥖 1 Toko Roti
+                        {housesOnlyCount} Rumah + 1 Toko Roti
                       </span>
                       {level.timeLimitMinutes && (
                         <span className="inline-flex items-center gap-1 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-lg sm:rounded-xl bg-slate-50 text-slate-600 font-bold text-[8px] sm:text-[9px] md:text-[10px] border border-slate-100">
