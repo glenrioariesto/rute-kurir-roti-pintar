@@ -1,5 +1,5 @@
 import React, { useRef, useState, useCallback, useEffect } from 'react';
-import { ChevronLeft, SkipBack, RotateCcw, Truck, ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronLeft, SkipBack, RotateCcw, Truck, ChevronDown, ChevronUp, HelpCircle, Volume2, VolumeX } from 'lucide-react';
 import { Connection, LevelConfig } from '@/types';
 import { formatDistance } from '@utils/findOptimalRoute';
 
@@ -19,6 +19,10 @@ interface MapCanvasProps {
   deliverySpeed: number;
   onChangeSpeed: (speed: number) => void;
   currentMetrics: { distance: number; time: number; isValid: boolean };
+  onHelpClick?: () => void;
+  isSoundOn: boolean;
+  onToggleSound: () => void;
+  onPlayClick?: () => void;
 }
 
 const BASE = import.meta.env.BASE_URL;
@@ -26,7 +30,6 @@ const ASSETS = {
   canvasBg: `${BASE}Background.webp`,
   house:  `${BASE}house.png`,
   store:  `${BASE}store.png`,
-  mapBg:  `${BASE}map-level-1-baru.webp`,
   motorDiagKananAtas:  `${BASE}motor-kanan-atas.webp`,
   motorDiagKananBawah: `${BASE}motor-kanan-bawah.webp`,
   motorDiagKiriAtas:   `${BASE}motor-kiri-atas.webp`,
@@ -40,7 +43,8 @@ const INITIAL: Transform = { x: 0, y: 0, scale: 1 };
 
 export const MapCanvas: React.FC<MapCanvasProps> = ({
   level, selectedRoute, segmentLengths, isDelivering, animationStep, courierPos, onHouseClick, onBack,
-  onUndo, onReset, onDeliver, onStopDeliver, deliverySpeed, onChangeSpeed, currentMetrics,
+  onUndo, onReset, onDeliver, onStopDeliver, deliverySpeed, onChangeSpeed, currentMetrics, onHelpClick,
+  isSoundOn, onToggleSound, onPlayClick,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [tf, setTf] = useState<Transform>(INITIAL);
@@ -184,7 +188,12 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
   };
 
   const getMotorAsset = () => {
-    if (!isDelivering || selectedRoute.length < 2) return ASSETS.motorDiagKananAtas;
+    if (!isDelivering || selectedRoute.length < 2) {
+      if (level.initialMotorImage) {
+        return `${BASE}${level.initialMotorImage}`;
+      }
+      return ASSETS.motorDiagKananAtas;
+    }
     const fromId = selectedRoute[animationStep];
     const toId   = selectedRoute[animationStep + 1];
     const from   = level.houses.find(h => h.id === fromId);
@@ -259,17 +268,48 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
 
   return (
     <div className="relative w-full h-full overflow-hidden select-none" style={{ backgroundImage: `url(${ASSETS.canvasBg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
-      {/* Back button */}
-      <button
-        onClick={onBack}
-        className="absolute top-3 left-3 z-20 bg-white/60 backdrop-blur-md border border-slate-200/80 rounded-lg p-1.5 shadow-sm hover:bg-white/85 active:scale-95 transition text-slate-600"
-        title="Kembali"
-      >
-        <ChevronLeft className="w-4 h-4" />
-      </button>
+      {/* Top Left Header Actions Container */}
+      <div className="absolute top-3 left-3 z-20 flex items-center gap-1.5 sm:gap-2">
+        {/* Back button */}
+        <button
+          onClick={onBack}
+          className="bg-white/60 backdrop-blur-md border border-slate-200/80 rounded-lg p-1.5 shadow-sm hover:bg-white/85 active:scale-95 transition text-slate-600 cursor-pointer animate-fade-in"
+          title="Kembali"
+        >
+          <ChevronLeft className="w-4 h-4" />
+        </button>
+
+        {/* Sound Toggle */}
+        <button
+          onClick={() => {
+            onPlayClick?.();
+            onToggleSound();
+          }}
+          className="bg-white/60 backdrop-blur-md border border-slate-200/80 rounded-lg p-1.5 shadow-sm hover:bg-white/85 active:scale-95 transition text-slate-600 cursor-pointer animate-fade-in"
+          title={isSoundOn ? 'Matikan Suara' : 'Nyalakan Suara'}
+        >
+          {isSoundOn ? (
+            <Volume2 className="w-4 h-4 text-emerald-600" />
+          ) : (
+            <VolumeX className="w-4 h-4 text-slate-400" />
+          )}
+        </button>
+
+        {/* Help Button */}
+        <button
+          onClick={() => {
+            onPlayClick?.();
+            onHelpClick?.();
+          }}
+          className="bg-white/60 backdrop-blur-md border border-slate-200/80 rounded-lg p-1.5 shadow-sm hover:bg-white/85 active:scale-95 transition text-amber-600 cursor-pointer animate-fade-in"
+          title="Cara Bermain"
+        >
+          <HelpCircle className="w-4 h-4" />
+        </button>
+      </div>
 
       {/* Hint */}
-      <div className="absolute top-3 left-12 z-20 pointer-events-none block md:hidden">
+      <div className="absolute top-3 left-[112px] z-20 pointer-events-none block md:hidden">
         <div className="text-[11px] font-medium text-slate-600 bg-white/60 backdrop-blur-md px-2.5 py-1 rounded-lg shadow-sm border border-slate-200/80 flex items-center gap-1.5">
           <span className="w-2 h-2 rounded-full bg-indigo-500 animate-ping shrink-0" />
           Geser / cubit untuk memperbesar/memperkecil <br/> · klik titik lokasi untuk rute
@@ -427,12 +467,14 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
               `}
             </style>
 
-            <image
-              href={ASSETS.mapBg}
-              x="0" y="0"
-              width="100%" height="100%"
-              preserveAspectRatio="xMidYMid meet"
-            />
+            {level.mapImage && (
+              <image
+                href={`${BASE}${level.mapImage}`}
+                x="0" y="0"
+                width="100%" height="100%"
+                preserveAspectRatio="xMidYMid meet"
+              />
+            )}
 
             {/* ── ROADS ── */}
             {level.connections.map((conn) => {
@@ -654,7 +696,7 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
 
       {/* Floating Controls Overlay at the bottom */}
       {isControlsExpanded ? (
-        <div className="absolute bottom-3 left-3 right-3 z-20 md:left-1/2 md:-translate-x-1/2 md:max-w-xl md:bg-white/50 md:backdrop-blur-md md:border border-slate-200/80 rounded-xl md:p-2.5 md:shadow-lg flex items-center justify-between gap-2 sm:gap-3 transition-all animate-fade-in">
+        <div className="absolute bottom-3 left-3 right-3 z-20 lg:left-1/2 lg:-translate-x-1/2 lg:max-w-xl lg:bg-white/50 lg:backdrop-blur-md lg:border border-slate-200/80 rounded-xl lg:p-2.5 lg:shadow-lg flex items-center justify-between gap-2 sm:gap-3 transition-all animate-fade-in">
           {/* Speed selection */}
           <div className="flex items-center gap-0.5 sm:gap-1 bg-slate-100/40 backdrop-blur-xs p-0.5 rounded-lg sm:rounded-xl border border-slate-200/65 shrink-0">
             {[1, 2, 3].map((s) => (
@@ -674,7 +716,7 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
           </div>
 
           {/* Actions group */}
-          <div className="flex items-center gap-1 sm:gap-1.5 font-display tracking-wider bg-white/50 md:bg-transparent backdrop-blur-md md:backdrop-blur-none border md:border-none border-slate-200/80 rounded-xl shadow-sm md:shadow-none">
+          <div className="flex items-center gap-1 sm:gap-1.5 font-display tracking-wider bg-white/50 lg:bg-transparent backdrop-blur-md lg:backdrop-blur-none border lg:border-none border-slate-200/80 rounded-xl shadow-sm lg:shadow-none">
             <button
               onClick={onUndo}
               disabled={selectedRoute.length <= 1 || isDelivering}
