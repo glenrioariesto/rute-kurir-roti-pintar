@@ -138,25 +138,17 @@ export function useRouteGame(level: LevelConfig) {
     // Cari jarak minimum
     const minDistance = Math.min(...pathsWithDist.map(pwd => pwd.distance));
 
-    // Filter rute yang jaraknya wajar (tidak lebih dari 1.8 kali lipat jarak terpendek)
-    // agar jalan memutar yang sangat jauh/looping otomatis disaring,
-    // sedangkan 2 jalan alternatif yang wajar tetap ditanyakan (Ada 2 rute).
-    const validPaths = pathsWithDist.filter(pwd => pwd.distance <= 1.8 * minDistance);
+    // Filter rute yang jaraknya sama dengan jarak terpendek
+    // agar otomatis memilih rute terpendek tanpa menanyakan pengguna.
+    // Jika ada beberapa rute terpendek yang sama, pilih salah satu secara otomatis.
+    const validPaths = pathsWithDist.filter(pwd => pwd.distance === minDistance);
 
     let path = validPaths[0].path;
 
-    if (validPaths.length > 1) {
-      // Jika salah satu rute yang valid adalah koneksi langsung (panjang path = 1), gunakan koneksi langsung tersebut.
-      const directPath = validPaths.find(pwd => pwd.path.length === 1);
-      if (directPath) {
-        path = directPath.path;
-      } else {
-        const targetHouse = level.houses.find(h => h.id === houseId);
-        const displayName = targetHouse?.isWaypoint ? targetHouse.name : houseId === 'Toko' ? 'Toko Roti' : `Rumah ${houseId}`;
-        setErrorToast(`⚠️ Ada beberapa rute ke ${displayName}. Pilih jalur dengan mengeklik titik belok di peta!`);
-        setTimeout(() => setErrorToast(null), 4000);
-        return;
-      }
+    // Jika salah satu rute yang valid adalah koneksi langsung (panjang path = 1), gunakan koneksi langsung tersebut.
+    const directPath = validPaths.find(pwd => pwd.path.length === 1);
+    if (directPath) {
+      path = directPath.path;
     }
     const newRoute = [...selectedRoute, ...path];
     setSelectedRoute(newRoute);

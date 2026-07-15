@@ -46,6 +46,7 @@ export interface LevelConfig {
   viewBox?: string;
   linear?: boolean;
   hideConnectionLines?: boolean;
+  mapImage?: string;
   houses: House[];
   connections: Connection[];
   description: string;
@@ -53,6 +54,7 @@ export interface LevelConfig {
   timeLimitMinutes?: number; // Level 5 time constraint
   startTimeString?: string; // e.g., '07:00'
   motorSize?: number; // ukuran sprite motor kurir (default 48)
+  initialMotorImage?: string; // override default motor image when idle at start
   defaultWaypointColors?: WaypointColors; // default warna waypoint untuk seluruh level
   ctExplanation: {
     decomposition: string;

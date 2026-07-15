@@ -25,30 +25,15 @@ export const optimalAnswers: OptimalAnswer[] = [
   },
   {
     levelId: 2,
-    title: 'Level 2: Analisis Rute (5 Rumah)',
-    route: ['Toko', 'D', 'C', 'B', 'A', 'E', 'Toko'],
-    distance: 21,
-    timeFormatted: '10 menit 30 detik' // 21 * 0.5 = 10.5 menit
+    title: 'Level 2: Analisis Rute (9 Rumah, 14 Titik)',
+    route: [
+      'Toko', 'W1', 'W2', 'B', 'W4', 'A', 'W5', 'C', 'W6', 'W3',
+      'F', 'W11', 'W9', 'H', 'W6', 'W7', 'W8', 'G', 'W9', 'W10',
+      'D', 'W12', 'W13', 'E', 'W1', 'Toko'
+    ],
+    distance: 610,
+    timeFormatted: '5 jam 5 menit' // 610 * 0.5 = 305 menit = 5 jam 5 menit
   },
-  {
-    levelId: 3,
-    title: 'Level 3: Labirin Rute Kompleks (8 Rumah)',
-    route: ['Toko', 'A', 'B', 'G', 'H', 'C', 'D', 'E', 'F', 'Toko'],
-    distance: 27,
-    timeFormatted: '13 menit 30 detik' // 27 * 0.5 = 13.5 menit
-  },
-  {
-    levelId: 4,
-    title: 'Level 4: Penutupan Jalan Darurat! (🚧)',
-    route: ['Toko', 'A', 'B', 'E', 'C', 'D', 'Toko'],
-    distance: 20,
-    timeFormatted: '10 menit' // 20 * 0.5 = 10 menit
-  },
-  {
-    levelId: 5,
-    title: 'Level 5: Batas Waktu (Ujian Logistik)',
-    route: ['Toko', 'A', 'B', 'C', 'D', 'E', 'F', 'Toko'],
-    distance: 23,
-    timeFormatted: '11 menit 30 detik' // 23 * 0.5 = 11.5 menit
-  }
+
+
 ];
