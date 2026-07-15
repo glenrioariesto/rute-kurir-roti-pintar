@@ -12,9 +12,33 @@ interface ArenaPageProps {
   onPlayClick?: () => void;
   isSoundOn: boolean;
   onToggleSound: () => void;
+  playHouseClick: () => void;
+  playWaypointClick: () => void;
+  playDeliverSound: () => void;
+  playResetSound: () => void;
+  playUndoSound: () => void;
+  playMotor: () => void;
+  stopMotor: () => void;
+  playWin: () => void;
+  stopWin: () => void;
 }
 
-export function ArenaPage({ initialLevelId, onBack, onPlayClick, isSoundOn, onToggleSound }: ArenaPageProps) {
+export function ArenaPage({
+  initialLevelId,
+  onBack,
+  onPlayClick,
+  isSoundOn,
+  onToggleSound,
+  playHouseClick,
+  playWaypointClick,
+  playDeliverSound,
+  playResetSound,
+  playUndoSound,
+  playMotor,
+  stopMotor,
+  playWin,
+  stopWin,
+}: ArenaPageProps) {
   const [selectedLevelId, setSelectedLevelId] = useState(initialLevelId);
   const [showTutorial, setShowTutorial] = useState(false);
 
@@ -59,6 +83,13 @@ export function ArenaPage({ initialLevelId, onBack, onPlayClick, isSoundOn, onTo
             isSoundOn={isSoundOn}
             onToggleSound={onToggleSound}
             onPlayClick={onPlayClick}
+            playHouseClick={playHouseClick}
+            playWaypointClick={playWaypointClick}
+            playDeliverSound={playDeliverSound}
+            playResetSound={playResetSound}
+            playUndoSound={playUndoSound}
+            playMotor={playMotor}
+            stopMotor={stopMotor}
           />
           {errorToast && (
             <div className="absolute bottom-24 left-3 right-3 bg-rose-600 text-white px-3 py-2.5 rounded-xl shadow-lg flex items-center gap-2 animate-bounce z-40 text-xs font-semibold md:left-4 md:right-auto md:max-w-md">
@@ -80,6 +111,8 @@ export function ArenaPage({ initialLevelId, onBack, onPlayClick, isSoundOn, onTo
         onRetry={() => { setShowResult(false); handleReset(); }}
         onNextLevel={() => { setShowResult(false); handleNextLevel(); }}
         hasNextLevel={selectedLevelId < levels.length}
+        playWin={playWin}
+        stopWin={stopWin}
       />
 
       <TutorialModal isOpen={showTutorial} onClose={() => setShowTutorial(false)} onPlayClick={onPlayClick} />

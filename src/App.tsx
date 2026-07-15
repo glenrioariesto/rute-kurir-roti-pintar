@@ -10,7 +10,20 @@ type Page = 'splash' | 'dashboard' | 'arena';
 export default function App() {
   const [page, setPage] = useState<Page>('splash');
   const [selectedLevelId, setSelectedLevelId] = useState(1);
-  const { isSoundOn, toggleSound, playClick } = useSound();
+  const {
+    isSoundOn,
+    toggleSound,
+    playClick,
+    playHouseClick,
+    playWaypointClick,
+    playDeliverSound,
+    playResetSound,
+    playUndoSound,
+    playMotor,
+    stopMotor,
+    playWin,
+    stopWin,
+  } = useSound();
 
   const handleSelectLevel = (id: number) => {
     playClick();
@@ -49,6 +62,15 @@ export default function App() {
           onPlayClick={playClick} 
           isSoundOn={isSoundOn}
           onToggleSound={toggleSound}
+          playHouseClick={playHouseClick}
+          playWaypointClick={playWaypointClick}
+          playDeliverSound={playDeliverSound}
+          playResetSound={playResetSound}
+          playUndoSound={playUndoSound}
+          playMotor={playMotor}
+          stopMotor={stopMotor}
+          playWin={playWin}
+          stopWin={stopWin}
         />
       )}
       <PortraitWarning />

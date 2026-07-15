@@ -23,6 +23,13 @@ interface MapCanvasProps {
   isSoundOn: boolean;
   onToggleSound: () => void;
   onPlayClick?: () => void;
+  playHouseClick: () => void;
+  playWaypointClick: () => void;
+  playDeliverSound: () => void;
+  playResetSound: () => void;
+  playUndoSound: () => void;
+  playMotor: () => void;
+  stopMotor: () => void;
 }
 
 const BASE = import.meta.env.BASE_URL;
@@ -45,6 +52,8 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
   level, selectedRoute, segmentLengths, isDelivering, animationStep, courierPos, onHouseClick, onBack,
   onUndo, onReset, onDeliver, onStopDeliver, deliverySpeed, onChangeSpeed, currentMetrics, onHelpClick,
   isSoundOn, onToggleSound, onPlayClick,
+  playHouseClick, playWaypointClick, playDeliverSound, playResetSound, playUndoSound,
+  playMotor, stopMotor,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [tf, setTf] = useState<Transform>(INITIAL);
@@ -147,6 +156,17 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
     };
   }, [updateTf]);
 
+  useEffect(() => {
+    if (isDelivering) {
+      playMotor();
+    } else {
+      stopMotor();
+    }
+    return () => {
+      stopMotor();
+    };
+  }, [isDelivering, playMotor, stopMotor]);
+
   // ── Mouse drag (desktop) ─────────────────────────────────────────────
   const onPointerDown = useCallback((e: React.PointerEvent) => {
     if (e.pointerType === 'touch') return; // handled by touch listeners
@@ -179,8 +199,18 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
   const handleNodeClick = useCallback((id: string, e: React.MouseEvent) => {
     e.stopPropagation();
     if (didDragRef.current) return;
+
+    const clickedHouse = level.houses.find(h => h.id === id);
+    if (clickedHouse) {
+      if (clickedHouse.isWaypoint) {
+        playWaypointClick();
+      } else {
+        playHouseClick();
+      }
+    }
+
     onHouseClick(id);
-  }, [onHouseClick]);
+  }, [didDragRef, level.houses, playWaypointClick, playHouseClick, onHouseClick]);
 
   const resetView = () => {
     tfRef.current = INITIAL;
@@ -269,7 +299,7 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
   return (
     <div className="relative w-full h-full overflow-hidden select-none" style={{ backgroundImage: `url(${ASSETS.canvasBg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
       {/* Top Left Header Actions Container */}
-      <div className="absolute top-3 left-3 z-20 flex items-center gap-1.5 sm:gap-2">
+      <div className="absolute top-3 left-3 z-20 flex items-start gap-1.5 sm:gap-2">
         {/* Back button */}
         <button
           onClick={onBack}
@@ -306,21 +336,25 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
         >
           <HelpCircle className="w-4 h-4" />
         </button>
-      </div>
-
-      {/* Hint */}
-      <div className="absolute top-3 left-[112px] z-20 pointer-events-none block md:hidden">
-        <div className="text-[11px] font-medium text-slate-600 bg-white/60 backdrop-blur-md px-2.5 py-1 rounded-lg shadow-sm border border-slate-200/80 flex items-center gap-1.5">
-          <span className="w-2 h-2 rounded-full bg-indigo-500 animate-ping shrink-0" />
-          Geser / cubit untuk memperbesar/memperkecil <br/> · klik titik lokasi untuk rute
+        
+        {/* Hint */}
+        <div className="z-20 pointer-events-none block md:hidden">
+          <div className="text-[11px] font-medium text-slate-600 bg-white/60 backdrop-blur-md px-2.5 py-1 rounded-lg shadow-sm border border-slate-200/80 flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-indigo-500 animate-ping shrink-0" />
+            Geser / cubit untuk memperbesar/memperkecil <br/> · klik titik lokasi untuk rute
+          </div>
         </div>
       </div>
+
 
       {/* Top Right Header Actions Container */}
       <div className="absolute top-3 right-3 z-20 flex items-center gap-1.5 sm:gap-2">
         {/* Route panel button */}
         <button
-          onClick={() => setShowRouteTimeline(prev => !prev)}
+          onClick={() => {
+            onPlayClick?.();
+            setShowRouteTimeline(prev => !prev);
+          }}
           className={`bg-white/60 backdrop-blur-md border rounded-lg px-2.5 py-1 text-[8.5px] md:text-[11px] font-semibold shadow-sm hover:bg-white/85 active:scale-95 transition flex items-center gap-1 font-display tracking-wider ${
             showRouteTimeline
               ? 'border-indigo-500 text-indigo-700 bg-indigo-50/45'
@@ -332,7 +366,10 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
 
         {/* Reset button */}
         <button
-          onClick={resetView}
+          onClick={() => {
+            onPlayClick?.();
+            resetView();
+          }}
           className="bg-white/60 backdrop-blur-md border border-slate-200/80 rounded-lg px-2.5 py-1 text-[8.5px] md:text-[11px] font-semibold text-slate-600 shadow-sm hover:bg-white/85 active:scale-95 transition font-display tracking-wider"
         >
           ⟳ Tampilan Awal
@@ -703,7 +740,10 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
               <button
                 key={s}
                 type="button"
-                onClick={() => onChangeSpeed(s)}
+                onClick={() => {
+                  onPlayClick?.();
+                  onChangeSpeed(s);
+                }}
                 className={`py-1 sm:py-1.5 px-2 sm:px-3 rounded-md sm:rounded-lg text-[8.5px] md:text-[11px] font-bold transition-all font-display ${
                   deliverySpeed === s
                     ? 'bg-[#0083C1] text-white shadow-xs'
@@ -718,7 +758,10 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
           {/* Actions group */}
           <div className="flex items-center gap-1 sm:gap-1.5 font-display tracking-wider bg-white/50 lg:bg-transparent backdrop-blur-md lg:backdrop-blur-none border lg:border-none border-slate-200/80 rounded-xl shadow-sm lg:shadow-none">
             <button
-              onClick={onUndo}
+              onClick={() => {
+                playUndoSound();
+                onUndo();
+              }}
               disabled={selectedRoute.length <= 1 || isDelivering}
               className="py-1.5 sm:py-2 px-2.5 sm:px-3 rounded-lg sm:rounded-xl font-bold text-[8.5px] md:text-[11px] text-slate-700 bg-slate-100/50 backdrop-blur-xs hover:bg-slate-200/70 border border-slate-300/80 active:scale-95 disabled:opacity-50 disabled:pointer-events-none transition flex items-center justify-center gap-1 font-display"
             >
@@ -727,7 +770,10 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
             </button>
 
             <button
-              onClick={onReset}
+              onClick={() => {
+                playResetSound();
+                onReset();
+              }}
               disabled={selectedRoute.length <= 1 || isDelivering}
               className="py-1.5 sm:py-2 px-2.5 sm:px-3 rounded-lg sm:rounded-xl font-bold text-[8.5px] md:text-[11px] text-slate-700 bg-slate-100/50 backdrop-blur-xs hover:bg-slate-200/70 border border-slate-300/80 active:scale-95 disabled:opacity-50 disabled:pointer-events-none transition flex items-center justify-center gap-1 font-display"
             >
@@ -737,7 +783,10 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
 
             {isDelivering ? (
               <button
-                onClick={onStopDeliver}
+                onClick={() => {
+                  playUndoSound();
+                  onStopDeliver();
+                }}
                 className="py-1.5 sm:py-2 px-3 sm:px-4 rounded-lg sm:rounded-xl font-bold text-[8.5px] md:text-[11px] text-white bg-rose-600 hover:bg-rose-700 active:scale-95 transition flex items-center justify-center gap-1.5 shadow-md shadow-rose-600/10 font-display"
               >
                 <RotateCcw className="w-3.5 h-3.5 text-white" />
@@ -745,7 +794,10 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
               </button>
             ) : (
               <button
-                onClick={onDeliver}
+                onClick={() => {
+                  playDeliverSound();
+                  onDeliver();
+                }}
                 disabled={selectedRoute.length <= 1}
                 className="py-1.5 sm:py-2 px-3 sm:px-4 rounded-lg sm:rounded-xl font-bold text-[8.5px] md:text-[11px] text-white bg-[#FC8C00] backdrop-blur-xs hover:bg-amber-600 active:scale-95 transition flex items-center justify-center gap-1.5 shadow-md shadow-amber-600/10 disabled:opacity-50 disabled:pointer-events-none font-display"
               >
@@ -756,7 +808,10 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
 
             {/* Collapse button */}
             <button
-              onClick={() => setIsControlsExpanded(false)}
+              onClick={() => {
+                onPlayClick?.();
+                setIsControlsExpanded(false);
+              }}
               className="py-1.5 sm:py-2 px-1.5 sm:px-2.5 rounded-lg sm:rounded-xl font-bold text-xs text-slate-600 bg-slate-100/50 backdrop-blur-xs hover:bg-slate-200/70 border border-slate-300/80 active:scale-95 transition flex items-center justify-center gap-1"
               title="Sembunyikan"
             >
@@ -766,7 +821,10 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
         </div>
       ) : (
         <button
-          onClick={() => setIsControlsExpanded(true)}
+          onClick={() => {
+            onPlayClick?.();
+            setIsControlsExpanded(true);
+          }}
           className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 bg-white/70 backdrop-blur-md border border-slate-200/80 rounded-lg sm:rounded-xl px-1.5 md:px-2.5 py-1.5 md:py-2.5 shadow-lg hover:bg-white/85 active:scale-95 transition text-slate-700 font-bold text-[8.5px] md:text-[11px] flex items-center gap-1.5 animate-fade-in font-display tracking-wider"
         >
           <ChevronUp className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-indigo-600 animate-bounce" style={{ animationDuration: '1s' }} />
