@@ -52,22 +52,22 @@ export function SplashPage({ onStart, isSoundOn, onToggleSound, onPlayClick }: S
         </button>
       </div>
 
-      {/* Right-aligned Card (Transparent White/Glassmorphism) */}
-      <div className="z-10 bg-white/20 backdrop-blur-lg border border-white/35 rounded-2xl sm:rounded-3xl p-4 lg:p-10 max-w-[290px] lg:max-w-lg w-full shadow-xl hover:shadow-2xl hover:bg-white/25 hover:border-white/50 transition-all duration-500 flex flex-col gap-4 sm:gap-8 animate-fade-in-up">
-        {/* Title */}
-        <h1 className="text-3xl lg:text-5xl font-display text-slate-800 leading-tight drop-shadow-sm select-none">
-          Petualangan Kurir<br />
-          <span className="bg-gradient-to-r from-amber-600 via-orange-500 to-rose-600 bg-clip-text text-transparent">
-            Mengantar Roti
+      {/* Card (Worksheet modal-like card with thick green border) */}
+      <div className="z-10 relative max-w-[290px] lg:max-w-lg w-full bg-white/50 backdrop-blur-xs border-[3px] md:border-[5px] border-[#0f5a31] rounded-2xl md:rounded-[24px] shadow-2xl overflow-hidden flex flex-col p-4 lg:p-10 gap-4 lg:gap-8 animate-fade-in-up hover:shadow-green-900/10 hover:bg-white/90 transition-all duration-500">
+        {/* Title Section */}
+        <h1 className="text-lg lg:text-3xl font-display text-slate-800 leading-tight select-none text-center font-black">
+          Menentukan Rute Pengantaran<br />
+          <span className="bg-gradient-to-r from-[#0f5a31] to-[#1e8d4f] bg-clip-text text-transparent">
+            Roti Paling Efisien
           </span>
         </h1>
 
         {/* Start Button */}
         <button
           onClick={onStart}
-          className="w-full sm:w-auto px-5 py-2.5 sm:px-10 sm:py-4 md:px-12 md:py-4.5 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-display text-xs sm:text-lg md:text-xl rounded-lg shadow-lg border border-amber-300/30 hover:scale-[1.03] active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 sm:gap-3 cursor-pointer group animate-pulse-glow"
+          className="w-full py-3 px-5 lg:py-4 lg:px-8 rounded-xl sm:rounded-2xl text-white font-black text-sm lg:text-lg flex items-center justify-center gap-2 bg-[#0f5a31] hover:bg-[#0b4826] border-b-4 sm:border-b-5 border-[#073019] active:border-b-0 active:translate-y-[4px] sm:active:translate-y-[5px] transition-all font-display tracking-wider cursor-pointer shadow-md hover:shadow-lg hover:shadow-green-950/10 group"
         >
-          <Play className="w-3 h-3 sm:w-4 sm:h-4 md:w-4.5 md:h-4.5 fill-white text-white" />
+          <Play className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-white text-white group-hover:scale-110 transition-transform" />
           Mulai Game
         </button>
       </div>
