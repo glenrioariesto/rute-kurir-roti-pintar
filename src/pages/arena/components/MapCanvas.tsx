@@ -336,16 +336,17 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
         >
           <HelpCircle className="w-4 h-4" />
         </button>
-        
-        {/* Hint */}
-        <div className="z-20 pointer-events-none block md:hidden">
-          <div className="text-[11px] font-medium text-slate-600 bg-white/60 backdrop-blur-md px-2.5 py-1 rounded-lg shadow-sm border border-slate-200/80 flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-indigo-500 animate-ping shrink-0" />
-            Geser / cubit untuk memperbesar/memperkecil <br/> · klik titik lokasi untuk rute
-          </div>
-        </div>
       </div>
 
+      {/* Level Toast Badge - centered between left and right headers */}
+      <div className="absolute top-2.5 left-1/2 -translate-x-1/2 z-20 pointer-events-none animate-fade-in">
+        <img
+          src={`${BASE}level-${level.id}-toast.webp`}
+          alt={`Level ${level.id}`}
+          className="h-8 lg:h-20 w-auto object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.25)]"
+          draggable={false}
+        />
+      </div>
 
       {/* Top Right Header Actions Container */}
       <div className="absolute top-3 right-3 z-20 flex items-center gap-1.5 sm:gap-2">
@@ -729,6 +730,16 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
             })}
           </svg>
         </div>
+      </div>
+
+      {/* Soal Badge - mobile: above-right of bottom controls, desktop: right of centered controls */}
+      <div className="absolute z-20 bottom-16 right-3 lg:bottom-3 pointer-events-none animate-fade-in">
+        <img
+          src={`${BASE}soal-${level.id}.webp`}
+          alt={`Soal Level ${level.id}`}
+          className="h-12 md:h-auto sm:max-w-[180px] lg:max-w-[220px] 2xl:max-w-[450px] w-auto object-contain drop-shadow-[0_2px_10px_rgba(0,0,0,0.2)] rounded-lg"
+          draggable={false}
+        />
       </div>
 
       {/* Floating Controls Overlay at the bottom */}

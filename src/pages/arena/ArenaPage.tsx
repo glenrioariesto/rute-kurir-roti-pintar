@@ -5,6 +5,7 @@ import { MapCanvas } from '@pages/arena/components/MapCanvas';
 import { ResultModal } from '@pages/arena/components/ResultModal';
 import { TutorialModal } from '@/components/shared/TutorialModal';
 import { AlertCircle } from 'lucide-react';
+import { LevelIntroOverlay } from '@pages/arena/components/LevelIntroOverlay';
 
 interface ArenaPageProps {
   initialLevelId: number;
@@ -41,6 +42,7 @@ export function ArenaPage({
 }: ArenaPageProps) {
   const [selectedLevelId, setSelectedLevelId] = useState(initialLevelId);
   const [showTutorial, setShowTutorial] = useState(false);
+  const [showIntro, setShowIntro] = useState(true);
 
   const currentLevel = levels.find((l) => l.id === selectedLevelId) || levels[0];
 
@@ -52,7 +54,10 @@ export function ArenaPage({
   } = useRouteGame(currentLevel);
 
   const handleNextLevel = () => {
-    if (selectedLevelId < levels.length) setSelectedLevelId(selectedLevelId + 1);
+    if (selectedLevelId < levels.length) {
+      setSelectedLevelId(selectedLevelId + 1);
+      setShowIntro(true);
+    }
   };
 
   return (
@@ -116,6 +121,13 @@ export function ArenaPage({
       />
 
       <TutorialModal isOpen={showTutorial} onClose={() => setShowTutorial(false)} onPlayClick={onPlayClick} />
+
+      {showIntro && (
+        <LevelIntroOverlay
+          levelId={selectedLevelId}
+          onComplete={() => setShowIntro(false)}
+        />
+      )}
     </div>
   );
 }

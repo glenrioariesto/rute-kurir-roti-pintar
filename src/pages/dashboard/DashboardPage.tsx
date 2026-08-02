@@ -5,7 +5,7 @@ import { TutorialModal } from '@/components/shared/TutorialModal';
 
 const BASE_URL = import.meta.env?.BASE_URL || '/';
 const logoPusbuk = `${BASE_URL}logo-pusbuk.webp`;
-const dashboardBg = `${BASE_URL}Design_prompt_for_house_game_202607221500.webp`;
+const dashboardBg = `${BASE_URL}bg-splash.webp`;
 
 interface DashboardPageProps {
   onSelectLevel: (id: number) => void;
