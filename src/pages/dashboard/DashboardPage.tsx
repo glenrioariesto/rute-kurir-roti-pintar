@@ -5,7 +5,7 @@ import { TutorialModal } from '@/components/shared/TutorialModal';
 
 const BASE_URL = import.meta.env?.BASE_URL || '/';
 const logoPusbuk = `${BASE_URL}logo-pusbuk.webp`;
-const dashboardBg = `${BASE_URL}bg-splash.webp`;
+const dashboardBg = `${BASE_URL}bg-splash-v2.webp`;
 
 interface DashboardPageProps {
   onSelectLevel: (id: number) => void;
@@ -54,6 +54,12 @@ const levelGradients = (id: number) => {
     numberBg: 'bg-gradient-to-br from-rose-400 to-pink-500 shadow-lg shadow-rose-400/25',
     accentText: 'text-[#be123c]',
   };
+};
+
+const hoverTitleClass = (id: number) => {
+  if (id === 1) return 'group-hover:text-[#0f5a31]';
+  if (id === 2) return 'group-hover:text-[#b45309]';
+  return 'group-hover:text-[#be123c]';
 };
 
 export function DashboardPage({ onSelectLevel, isSoundOn, onToggleSound, onPlayClick }: DashboardPageProps) {
@@ -154,14 +160,14 @@ export function DashboardPage({ onSelectLevel, isSoundOn, onToggleSound, onPlayC
                         {level.id < 10 ? `0${level.id}` : level.id}
                       </span>
                     </div>
-                    <span className={`text-[8px] lg:text-[10px] font-black px-2 sm:px-3 py-0.5 lg:py-1 rounded-full ${diff.color}`}>
+                    <span className={`text-[8px] lg:text-[10px] font-black px-2 sm:px-3 py-0.5 lg:py-1 rounded-full ${diff.color} `}>
                       {diff.label}
                     </span>
                   </div>
 
                   {/* Level Title */}
                   <div className="my-2 lg:my-5 shrink-0">
-                    <h3 className="font-black text-slate-800 text-xs sm:text-sm md:text-lg leading-tight font-display tracking-wide group-hover:text-amber-600 transition-colors pr-8 sm:pr-12">
+                     <h3 className={`font-black text-slate-800 text-xs sm:text-sm md:text-lg leading-tight font-display tracking-wide ${hoverTitleClass(level.id)} transition-colors pr-8 sm:pr-12`}>
                       {level.title.replace(/Level \d+: /, '')}
                     </h3>
                   </div>

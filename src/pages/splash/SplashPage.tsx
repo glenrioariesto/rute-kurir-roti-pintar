@@ -2,7 +2,7 @@ import { ChevronRight, Play, Volume2, VolumeX } from 'lucide-react';
 
 const BASE_URL = import.meta.env?.BASE_URL || '/';
 const logoPusbuk = `${BASE_URL}logo-pusbuk.webp`;
-const splashBg = `${BASE_URL}bg-splash.webp`;
+const splashBg = `${BASE_URL}bg-splash-v2.webp`;
 
 interface SplashPageProps {
   onStart: () => void;
@@ -53,19 +53,19 @@ export function SplashPage({ onStart, isSoundOn, onToggleSound, onPlayClick }: S
       </div>
 
       {/* Card (Worksheet modal-like card with thick green border) */}
-      <div className="z-10 relative max-w-[290px] lg:max-w-lg w-full bg-white/50 backdrop-blur-xs border-[3px] md:border-[5px] border-[#0f5a31] rounded-2xl md:rounded-[24px] shadow-2xl overflow-hidden flex flex-col p-4 lg:p-10 gap-4 lg:gap-8 animate-fade-in-up hover:shadow-green-900/10 hover:bg-white/90 transition-all duration-500">
+      <div className="z-10 relative max-w-[290px] lg:max-w-[580px] w-full bg-white border-[3px] md:border-[5px] border-[#0f5a31] rounded-[24px] shadow-2xl overflow-hidden flex flex-col p-4 lg:p-10 gap-4 lg:gap-8 animate-fade-in-up hover:shadow-green-900/10 transition-all duration-500">
         {/* Title Section */}
-        <h1 className="text-lg lg:text-3xl font-display text-slate-800 leading-tight select-none text-center font-black">
-          Menentukan Rute Pengantaran<br />
+        <h1 className="text-lg lg:text-[40px] font-display text-slate-800 uppercase leading-tight select-none font-black px-2">
+          Rute Pintar <br />
           <span className="bg-gradient-to-r from-[#0f5a31] to-[#1e8d4f] bg-clip-text text-transparent">
-            Roti Paling Efisien
+            Sang pengantar roti
           </span>
         </h1>
 
         {/* Start Button */}
         <button
           onClick={onStart}
-          className="w-full py-3 px-5 lg:py-4 lg:px-8 rounded-xl sm:rounded-2xl text-white font-black text-sm lg:text-lg flex items-center justify-center gap-2 bg-[#0f5a31] hover:bg-[#0b4826] border-b-4 sm:border-b-5 border-[#073019] active:border-b-0 active:translate-y-[4px] sm:active:translate-y-[5px] transition-all font-display tracking-wider cursor-pointer shadow-md hover:shadow-lg hover:shadow-green-950/10 group"
+          className="w-full py-3 px-5 lg:py-4 lg:px-8 rounded-xl sm:rounded-2xl text-white font-black text-sm lg:text-lg flex items-center justify-center gap-2 bg-[#037DC2] hover:bg-[#074C83] border-b-3 border-[#074C83] active:border-b-0 active:translate-y-[3px] transition-all font-display tracking-wider cursor-pointer shadow-md hover:shadow-lg hover:shadow-amber-900/10 group"
         >
           <Play className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-white text-white group-hover:scale-110 transition-transform" />
           Mulai Game
