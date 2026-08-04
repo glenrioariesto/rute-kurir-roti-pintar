@@ -105,7 +105,7 @@ export function TutorialModal({ isOpen, onClose, onPlayClick }: TutorialModalPro
           <div className="w-5 h-5 sm:w-7 sm:h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 bg-[#0f5a31] rounded-md sm:rounded-lg md:rounded-xl flex items-center justify-center text-white shrink-0 shadow-sm">
             {slide.icon}
           </div>
-          <h2 className="text-[9px] sm:text-sm md:text-base lg:text-lg font-black font-display tracking-wide text-slate-800 flex-1 leading-none">
+          <h2 className="text-[7.5px] sm:text-sm md:text-base lg:text-lg font-black font-display tracking-wide text-slate-800 flex-1 leading-none">
             {slide.title}
           </h2>
           <span className="text-[7px] sm:text-[10px] md:text-xs lg:text-sm font-black text-[#0f5a31] tracking-wider font-display shrink-0 bg-[#0f5a31]/10 px-1.5 sm:px-2.5 md:px-3 py-0.5 md:py-1 rounded-full">
@@ -131,7 +131,7 @@ export function TutorialModal({ isOpen, onClose, onPlayClick }: TutorialModalPro
                 <span className="w-3.5 h-3.5 sm:w-5 sm:h-5 md:w-6 md:h-6 rounded-full bg-[#0f5a31] text-white text-[7px] sm:text-[9px] md:text-[10px] lg:text-xs font-black flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
                   {i + 1}
                 </span>
-                <span className="text-slate-700 text-[8.5px] sm:text-[11.5px] md:text-base lg:text-lg font-medium leading-snug sm:leading-relaxed font-sans">
+                <span className="text-slate-700 text-[7.5px] sm:text-[11.5px] md:text-sm lg:text-base font-medium leading-snug sm:leading-relaxed font-sans">
                   {tip}
                 </span>
               </div>
