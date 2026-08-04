@@ -1,7 +1,5 @@
-import { useState } from 'react';
-import { ChevronRight, HelpCircle, Volume2, VolumeX } from 'lucide-react';
+import { ChevronRight, Volume2, VolumeX } from 'lucide-react';
 import { levels } from '@/levels';
-import { TutorialModal } from '@/components/shared/TutorialModal';
 
 const BASE_URL = import.meta.env?.BASE_URL || '/';
 const logoPusbuk = `${BASE_URL}logo-pusbuk.webp`;
@@ -63,7 +61,6 @@ const hoverTitleClass = (id: number) => {
 };
 
 export function DashboardPage({ onSelectLevel, isSoundOn, onToggleSound, onPlayClick }: DashboardPageProps) {
-  const [showTutorial, setShowTutorial] = useState(true);
   return (
     <div className="h-screen w-full flex flex-col justify-center items-center relative overflow-hidden antialiased py-0 px-0 lg:py-6 lg:px-6 xl:py-8 xl:px-8 select-none">
       {/* Background Image - Full screen */}
@@ -101,18 +98,6 @@ export function DashboardPage({ onSelectLevel, isSoundOn, onToggleSound, onPlayC
             <VolumeX className="w-4 h-4 sm:w-5 sm:h-5 md:w-5.5 md:h-5.5 group-hover:scale-110 transition-transform text-slate-400" />
           )}
         </button>
-
-        {/* Cara Main */}
-        <button
-          onClick={() => {
-            onPlayClick();
-            setShowTutorial(true);
-          }}
-          className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-white/70 backdrop-blur-md border border-slate-200/60 rounded-xl sm:rounded-2xl flex items-center justify-center text-slate-500 hover:text-amber-600 hover:bg-white/90 hover:border-amber-200/60 hover:shadow-lg hover:shadow-amber-500/10 transition-all duration-300 active:scale-90 cursor-pointer group"
-          title="Cara Bermain"
-        >
-          <HelpCircle className="w-4 h-4 sm:w-5 sm:h-5 md:w-5.5 md:h-5.5 group-hover:scale-110 transition-transform" />
-        </button>
       </div>
 
       {/* Centered Content Wrapper - Worksheet-styled border is only active on tablet/desktop (sm: and up), transparent on mobile */}
@@ -139,16 +124,6 @@ export function DashboardPage({ onSelectLevel, isSoundOn, onToggleSound, onPlayC
                   onClick={() => onSelectLevel(level.id)}
                   className={`${theme.cardBg} rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 md:p-6 text-left flex flex-col justify-between shadow-sm hover:shadow-xl ${theme.hoverBorder} ${theme.hoverGlow} hover:-translate-y-1.5 transition-all duration-500 active:scale-98 group cursor-pointer relative overflow-hidden w-full md:w-auto min-h-[135px] sm:min-h-[180px] md:min-h-[250px]`}
                 >
-                  {/* Background decoration */}
-                  <div className="absolute right-3 sm:right-4 top-8 sm:top-10 opacity-15 pointer-events-none group-hover:opacity-30 group-hover:scale-110 transition-all duration-500">
-                    <svg width="80" height="64" viewBox="0 0 100 80" fill="none" stroke="currentColor" className="w-14 h-10 sm:w-16 sm:h-10 lg:w-[100px] lg:h-[80px]">
-                      <circle cx="20" cy="60" r="5" fill="currentColor" className={theme.accentText} />
-                      <circle cx="55" cy="20" r="5" fill="currentColor" className={theme.accentText} />
-                      <circle cx="85" cy="45" r="5" fill="currentColor" className={theme.accentText} />
-                      <line x1="20" y1="60" x2="55" y2="20" stroke="currentColor" strokeWidth="2" strokeDasharray="4,4" className={theme.accentText} />
-                      <line x1="55" y1="20" x2="85" y2="45" stroke="currentColor" strokeWidth="2" strokeDasharray="4,4" className={theme.accentText} />
-                    </svg>
-                  </div>
 
                   {/* Card Top: Level number + difficulty */}
                   <div className="flex items-start justify-between shrink-0">
@@ -160,14 +135,14 @@ export function DashboardPage({ onSelectLevel, isSoundOn, onToggleSound, onPlayC
                         {level.id < 10 ? `0${level.id}` : level.id}
                       </span>
                     </div>
-                    <span className={`text-[8px] lg:text-[10px] font-black px-2 sm:px-3 py-0.5 lg:py-1 rounded-full ${diff.color} `}>
+                    <span className={`text-[8px] lg:text-sm font-black px-2 sm:px-3 py-0.5 lg:py-1 rounded-full ${diff.color} `}>
                       {diff.label}
                     </span>
                   </div>
 
                   {/* Level Title */}
                   <div className="my-2 lg:my-5 shrink-0">
-                     <h3 className={`font-black text-slate-800 text-xs sm:text-sm md:text-lg leading-tight font-display tracking-wide ${hoverTitleClass(level.id)} transition-colors pr-8 sm:pr-12`}>
+                     <h3 className={`font-black text-slate-800 text-xs sm:text-sm md:text-lg leading-tight font-display tracking-wide ${hoverTitleClass(level.id)} transition-colors pr-6 sm:pr-10`}>
                       {level.title.replace(/Level \d+: /, '')}
                     </h3>
                   </div>
@@ -175,11 +150,11 @@ export function DashboardPage({ onSelectLevel, isSoundOn, onToggleSound, onPlayC
                   {/* Stats + Play Button */}
                   <div className="mt-auto shrink-0">
                     <div className="flex flex-wrap gap-1 sm:gap-1.5 mb-2 lg:mb-4">
-                      <span className={`inline-flex items-center gap-1 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-lg sm:rounded-xl ${theme.statsBg} font-bold text-[8px] sm:text-[9px] lg:text-[10px]`}>
+                      <span className={`inline-flex items-center gap-1 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-lg sm:rounded-xl ${theme.statsBg} font-bold text-[8px] lg:text-xs`}>
                         {housesOnlyCount} Rumah + 1 Toko Roti
                       </span>
                       {level.timeLimitMinutes && (
-                        <span className={`inline-flex items-center gap-1 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-lg sm:rounded-xl ${theme.statsBg} font-bold text-[8px] sm:text-[9px] lg:text-[10px]`}>
+                        <span className={`inline-flex items-center gap-1 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-lg sm:rounded-xl ${theme.statsBg} font-bold text-[8px] lg:text-xs`}>
                           ⏱️ {level.timeLimitMinutes} Menit
                         </span>
                       )}
@@ -199,7 +174,7 @@ export function DashboardPage({ onSelectLevel, isSoundOn, onToggleSound, onPlayC
         </main>
       </div>
 
-      <TutorialModal isOpen={showTutorial} onClose={() => setShowTutorial(false)} onPlayClick={onPlayClick} />
+
     </div>
   );
 }

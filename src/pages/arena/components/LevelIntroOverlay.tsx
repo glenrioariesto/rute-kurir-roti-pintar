@@ -96,7 +96,7 @@ export const LevelIntroOverlay: React.FC<LevelIntroOverlayProps> = ({ levelId, o
 
       {/* Toast - center top area */}
       <div
-        className="relative z-10 mt-[8vh] sm:mt-[10vh] flex-shrink-0"
+        className="relative z-10 mt-[6vh] sm:mt-[8vh] flex-shrink-0"
         style={toastStyle}
       >
         <img
@@ -127,7 +127,7 @@ export const LevelIntroOverlay: React.FC<LevelIntroOverlayProps> = ({ levelId, o
       {/* Tap to continue hint */}
       {phase === 'soal-visible' && (
         <div className="relative z-10 mb-[6vh] animate-pulse">
-          <span className="text-white/80 text-xs sm:text-sm font-semibold tracking-wider uppercase drop-shadow-md">
+          <span className="text-white/80 text-xs sm:text-sm md:text-base font-semibold tracking-wider uppercase drop-shadow-md">
             Ketuk untuk mulai
           </span>
         </div>

@@ -36,7 +36,7 @@ export const levels: LevelConfig[] = [
     //
     id: 1,
     motorSize: 30,
-    title: 'Level 1: Dasar Urutan (6 Rumah + 1 Toko Roti)',
+    title: 'Level 1: Dasar Urutan 6 Rumah + 1 Toko Roti',
     viewBox: '0 0 800 520',
     linear: true,
     hideConnectionLines: true,
@@ -107,7 +107,7 @@ export const levels: LevelConfig[] = [
   {
     id: 2,
     motorSize: 30,
-    title: 'Level 2: Analisis Rute (8 Rumah + 1 Toko Roti)',
+    title: 'Level 2: Analisis Rute 8 Rumah + 1 Toko Roti',
     viewBox: '0 0 800 820',
     linear: true,
     hideConnectionLines: true,
@@ -179,7 +179,7 @@ export const levels: LevelConfig[] = [
   {
     id: 3,
     motorSize: 30,
-    title: 'Level 3: Labirin Kota (8 Rumah + 1 Toko Roti)',
+    title: 'Level 3: Labirin Kota 8 Rumah + 1 Toko Roti',
     viewBox: '0 0 800 820',
     linear: true,
     hideConnectionLines: true,

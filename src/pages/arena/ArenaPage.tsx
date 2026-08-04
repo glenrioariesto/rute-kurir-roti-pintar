@@ -43,6 +43,7 @@ export function ArenaPage({
   const [selectedLevelId, setSelectedLevelId] = useState(initialLevelId);
   const [showTutorial, setShowTutorial] = useState(false);
   const [showIntro, setShowIntro] = useState(true);
+  const [isFirstIntro, setIsFirstIntro] = useState(true);
 
   const currentLevel = levels.find((l) => l.id === selectedLevelId) || levels[0];
 
@@ -125,7 +126,13 @@ export function ArenaPage({
       {showIntro && (
         <LevelIntroOverlay
           levelId={selectedLevelId}
-          onComplete={() => setShowIntro(false)}
+          onComplete={() => {
+            setShowIntro(false);
+            if (isFirstIntro) {
+              setShowTutorial(true);
+              setIsFirstIntro(false);
+            }
+          }}
         />
       )}
     </div>
