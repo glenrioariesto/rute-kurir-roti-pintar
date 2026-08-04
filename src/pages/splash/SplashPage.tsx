@@ -2,7 +2,7 @@ import { ChevronRight, Play, Volume2, VolumeX } from 'lucide-react';
 
 const BASE_URL = import.meta.env?.BASE_URL || '/';
 const logoPusbuk = `${BASE_URL}logo-pusbuk.webp`;
-const splashBg = `${BASE_URL}bg-splash-v2.webp`;
+const splashBg = `${BASE_URL}bg-splash.webp?v=2`;
 
 interface SplashPageProps {
   onStart: () => void;

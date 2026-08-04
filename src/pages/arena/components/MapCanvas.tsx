@@ -37,10 +37,10 @@ const ASSETS = {
   canvasBg: `${BASE}Background.webp`,
   house:  `${BASE}house.png`,
   store:  `${BASE}store.png`,
-  motorDiagKananAtas:  `${BASE}motor-kanan-atas.webp`,
-  motorDiagKananBawah: `${BASE}motor-kanan-bawah.webp`,
-  motorDiagKiriAtas:   `${BASE}motor-kiri-atas.webp`,
-  motorDiagKiriBawah:  `${BASE}motor-kiri-bawah.webp`,
+  motorDiagKananAtas:  `${BASE}motor-kanan-atas.webp?v=2`,
+  motorDiagKananBawah: `${BASE}motor-kanan-bawah.webp?v=2`,
+  motorDiagKiriAtas:   `${BASE}motor-kiri-atas.webp?v=2`,
+  motorDiagKiriBawah:  `${BASE}motor-kiri-bawah.webp?v=2`,
 };
 
 interface Transform { x: number; y: number; scale: number; }

@@ -3,7 +3,7 @@ import { levels } from '@/levels';
 
 const BASE_URL = import.meta.env?.BASE_URL || '/';
 const logoPusbuk = `${BASE_URL}logo-pusbuk.webp`;
-const dashboardBg = `${BASE_URL}bg-splash-v2.webp`;
+const dashboardBg = `${BASE_URL}bg-splash.webp?v=2`;
 
 interface DashboardPageProps {
   onSelectLevel: (id: number) => void;
