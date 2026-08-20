@@ -16,8 +16,8 @@ export const optimalAnswers: OptimalAnswer[] = [
     levelId: 1,
     title: 'Level 1: Dasar Urutan (6 Rumah)',
     route: [
-      'Toko', 'A', 'wp-2', 'B', 'wp-8', 'E', 'wp-5', 'wp-6', 'wp-7', 'F',
-      'wp-9', 'wp-8', 'E', 'wp-5', 'wp-6', 'D', 'wp-4', 'wp-3', 'C', 'wp-2',
+      'Toko', 'A', '2', 'B', '8', 'E', '5', '6', '7', 'F',
+      '9', '8', 'E', '5', '6', 'D', '4', '3', 'C', '2',
       'A', 'Toko'
     ],
     distance: 79,
@@ -27,9 +27,9 @@ export const optimalAnswers: OptimalAnswer[] = [
     levelId: 2,
     title: 'Level 2: Analisis Rute (9 Rumah, 14 Titik)',
     route: [
-      'Toko', 'W1', 'W2', 'B', 'W4', 'A', 'W5', 'C', 'W6', 'W3',
-      'F', 'W11', 'W9', 'H', 'W6', 'W7', 'W8', 'G', 'W9', 'W10',
-      'D', 'W12', 'W13', 'E', 'W1', 'Toko'
+      'Toko', '1', '2', 'B', '4', 'A', '5', 'C', '6', '3',
+      'F', '11', '9', 'H', '6', '7', '8', 'G', '9', '10',
+      'D', '12', '13', 'E', '1', 'Toko'
     ],
     distance: 610,
     timeFormatted: '5 jam 5 menit' // 610 * 0.5 = 305 menit = 5 jam 5 menit
