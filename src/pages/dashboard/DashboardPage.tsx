@@ -106,7 +106,7 @@ export function DashboardPage({ onSelectLevel, isSoundOn, onToggleSound, onPlayC
       {/* Header - Separate from dashboard-card on both mobile and desktop */}
       <header 
         id="dashboard-header" 
-        className="z-10 w-fit mx-auto flex flex-col items-center text-center shrink-0 bg-[#0090D4] backdrop-blur-md border-[2.5px] sm:border-[3px] md:border-[4px] 2xl:border-[6px] border-white rounded-lg sm:rounded-2xl 2xl:rounded-3xl shadow-lg py-1 px-3.5 sm:py-2 sm:px-6 md:py-2.5 md:px-8 2xl:py-3.5 2xl:px-12 mb-1.5 sm:mb-3 md:mb-4 lg:mb-5 2xl:mb-7 animate-fade-in-up"
+        className="z-10 w-fit mx-auto flex flex-col items-center text-center shrink-0 bg-[#0090D4] backdrop-blur-md border-[2.5px] sm:border-[3px] md:border-[4px] 2xl:border-[6px] border-white rounded-lg sm:rounded-2xl 2xl:rounded-3xl shadow-lg pt-1.5 pb-0.75 px-3.5 sm:pt-2.5 sm:pb-1.25 sm:px-6 md:pt-3 md:pb-1.5 md:px-8 2xl:pt-4 2xl:pb-2 2xl:px-12 mb-1.5 sm:mb-3 md:mb-4 lg:mb-5 2xl:mb-7 animate-fade-in-up"
       >
         <h1 
           id="dashboard-title" 
