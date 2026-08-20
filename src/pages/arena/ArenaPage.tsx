@@ -121,7 +121,12 @@ export function ArenaPage({
         stopWin={stopWin}
       />
 
-      <TutorialModal isOpen={showTutorial} onClose={() => setShowTutorial(false)} onPlayClick={onPlayClick} />
+      <TutorialModal
+        isOpen={showTutorial}
+        onClose={() => setShowTutorial(false)}
+        onPlayClick={onPlayClick}
+        levelId={selectedLevelId}
+      />
 
       {showIntro && (
         <LevelIntroOverlay

@@ -468,7 +468,6 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
           style={{
             transform: `translate(${tf.x}px, ${tf.y}px) scale(${tf.scale})`,
             transformOrigin: '0 0',
-            willChange: 'transform',
             width: '100%',
             height: '100%',
           }}
@@ -478,6 +477,11 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
             preserveAspectRatio="xMidYMid meet"
             className="w-full h-full"
             xmlns="http://www.w3.org/2000/svg"
+            style={{
+              shapeRendering: 'geometricPrecision',
+              textRendering: 'geometricPrecision',
+              imageRendering: 'high-quality',
+            }}
           >
             <defs>
               <pattern id="map-dots" width="40" height="40" patternUnits="userSpaceOnUse">
@@ -518,6 +522,9 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
                 x="0" y="0"
                 width="100%" height="100%"
                 preserveAspectRatio="xMidYMid meet"
+                style={{
+                  imageRendering: 'high-quality',
+                }}
               />
             )}
 
@@ -670,7 +677,7 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
                     x={-mHalf} y={-mHalf}
                     width={mSize} height={mSize}
                     preserveAspectRatio="xMidYMid meet"
-                    style={{ pointerEvents: 'none' }}
+                    style={{ pointerEvents: 'none', imageRendering: 'high-quality' }}
                   />
                 </g>
               );
@@ -715,7 +722,7 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
                         />
                       </g>
                     )}
-                    <image href={markerSrc} x={-mHalf + ox} y={-mHalf + oy} width={mSize} height={mSize} preserveAspectRatio="xMidYMid meet" style={{ pointerEvents: 'auto', opacity: 1.0, filter: 'none', transition: 'all 0.3s ease' }} />
+                    <image href={markerSrc} x={-mHalf + ox} y={-mHalf + oy} width={mSize} height={mSize} preserveAspectRatio="xMidYMid meet" style={{ pointerEvents: 'auto', opacity: 1.0, filter: 'none', transition: 'all 0.3s ease', imageRendering: 'high-quality' }} />
                     {isInRoute && !isToko && (() => {
                       const visitCount = selectedRoute.filter(id => id === house.id).length;
                       return (
