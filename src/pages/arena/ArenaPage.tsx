@@ -62,10 +62,10 @@ export function ArenaPage({
   };
 
   return (
-    <div className="h-screen overflow-hidden bg-slate-50 text-slate-800 font-sans flex flex-col antialiased">
-      <main className="flex-1 overflow-hidden flex">
+    <div id="arena-page" className="h-screen overflow-hidden bg-slate-50 text-slate-800 font-sans flex flex-col antialiased">
+      <main id="arena-main" className="flex-1 overflow-hidden flex">
         {/* MAP CANVAS fills the entire screen */}
-        <div className="flex-1 relative overflow-hidden">
+        <div id="arena-canvas-container" className="flex-1 relative overflow-hidden">
           <MapCanvas
             level={currentLevel}
             selectedRoute={selectedRoute}
@@ -98,7 +98,7 @@ export function ArenaPage({
             stopMotor={stopMotor}
           />
           {errorToast && (
-            <div className="absolute bottom-24 left-3 right-3 bg-rose-600 text-white px-3 py-2.5 rounded-xl shadow-lg flex items-center gap-2 animate-bounce z-40 text-xs font-semibold md:left-4 md:right-auto md:max-w-md">
+            <div id="arena-error-toast" className="absolute bottom-24 left-3 right-3 bg-rose-600 text-white px-3 py-2.5 rounded-xl shadow-lg flex items-center gap-2 animate-bounce z-40 text-xs font-semibold md:left-4 md:right-auto md:max-w-md">
               <AlertCircle className="w-4 h-4 shrink-0" />
               <span>{errorToast}</span>
             </div>

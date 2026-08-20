@@ -44,11 +44,12 @@ export const ResultModal: React.FC<ResultModalProps> = ({
   const isGood = score >= 80 && score < 100;
 
   return (
-    <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-fade-in">
-      <div className="bg-white rounded-3xl max-w-lg w-full max-h-[90vh] overflow-hidden shadow-2xl border border-slate-100 flex flex-col transform transition-all duration-300 scale-100">
+    <div id="result-modal-backdrop" className="fixed inset-0 bg-slate-900/80 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-fade-in">
+      <div id="result-modal-card" className="bg-white rounded-3xl max-w-lg w-full max-h-[90vh] overflow-hidden shadow-2xl border border-slate-100 flex flex-col transform transition-all duration-300 scale-100">
         
         {/* Banner header themed by score */}
         <div
+          id="result-modal-header"
           className={`p-4 sm:p-6 text-center text-white relative flex flex-col items-center shrink-0 ${
             isPerfect
               ? 'bg-gradient-to-tr from-amber-500 to-yellow-400'
@@ -59,6 +60,7 @@ export const ResultModal: React.FC<ResultModalProps> = ({
         >
           {/* Close button top right */}
           <button
+            id="result-modal-close-btn"
             onClick={onClose}
             className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-white/20 hover:bg-white/35 text-white p-1 rounded-full transition cursor-pointer"
           >
@@ -66,24 +68,24 @@ export const ResultModal: React.FC<ResultModalProps> = ({
           </button>
 
           {/* Trophy element */}
-          <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-white/20 flex items-center justify-center mb-1.5 sm:mb-2 animate-bounce-slow">
+          <div id="result-modal-trophy" className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-white/20 flex items-center justify-center mb-1.5 sm:mb-2 animate-bounce-slow">
             <Award className="w-7 h-7 sm:w-10 sm:h-10 text-white" />
           </div>
 
-          <h3 className="text-base sm:text-xl font-bold font-display tracking-wide">
+          <h3 id="result-modal-title" className="text-base sm:text-xl font-bold font-display tracking-wide">
             {isPerfect ? 'Misi Sukses Sempurna! 🎉' : isGood ? 'Misi Sukses! 👍' : 'Misi Selesai! 🚚'}
           </h3>
           
-          <div className="mt-1 sm:mt-2 bg-white/15 px-3 sm:px-4 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-semibold tracking-wider uppercase font-display">
+          <div id="result-modal-score-badge" className="mt-1 sm:mt-2 bg-white/15 px-3 sm:px-4 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-semibold tracking-wider uppercase font-display">
             Skor Uji: {score} Poin
           </div>
         </div>
 
         {/* Modal content body */}
-        <div className="p-4 sm:p-6 flex-1 flex flex-col gap-3 sm:gap-4 overflow-y-auto">
+        <div id="result-modal-body" className="p-4 sm:p-6 flex-1 flex flex-col gap-3 sm:gap-4 overflow-y-auto">
           
           {/* Compare mini metrics summary */}
-          <div className="grid grid-cols-2 gap-2 sm:gap-3 bg-slate-50 p-2.5 sm:p-3.5 rounded-2xl border border-slate-150">
+          <div id="result-modal-metrics" className="grid grid-cols-2 gap-2 sm:gap-3 bg-slate-50 p-2.5 sm:p-3.5 rounded-2xl border border-slate-150">
             <div className="text-center border-r border-slate-200">
               <span className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-widest font-display">Rute Anda</span>
               <p className="text-base sm:text-lg font-extrabold text-slate-700 font-mono mt-0.5">{formatDistance(distance)}</p>
@@ -97,8 +99,9 @@ export const ResultModal: React.FC<ResultModalProps> = ({
 
 
           {/* Action buttons */}
-          <div className="flex flex-col sm:flex-row gap-1.5 sm:gap-2 mt-2 sm:mt-4 pt-1 sm:pt-1.5 font-display tracking-wider shrink-0">
+          <div id="result-modal-actions" className="flex flex-col sm:flex-row gap-1.5 sm:gap-2 mt-2 sm:mt-4 pt-1 sm:pt-1.5 font-display tracking-wider shrink-0">
             <button
+              id="result-modal-retry-btn"
               onClick={onRetry}
               className="flex-1 py-2.5 sm:py-3 px-3 sm:px-4 rounded-xl sm:rounded-2xl text-[11px] sm:text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-205 border border-slate-300 flex items-center justify-center gap-1.5 active:scale-95 transition cursor-pointer"
             >
@@ -108,6 +111,7 @@ export const ResultModal: React.FC<ResultModalProps> = ({
 
             {hasNextLevel && (isPerfect || isGood) ? (
               <button
+                id="result-modal-next-btn"
                 onClick={onNextLevel}
                 className="flex-1 py-2.5 sm:py-3 px-3 sm:px-4 rounded-xl sm:rounded-2xl text-[11px] sm:text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 flex items-center justify-center gap-1.5 shadow-md shadow-indigo-200 active:scale-95 transition cursor-pointer"
               >
@@ -116,6 +120,7 @@ export const ResultModal: React.FC<ResultModalProps> = ({
               </button>
             ) : hasNextLevel ? (
               <button
+                id="result-modal-skip-next-btn"
                 onClick={onNextLevel}
                 className="flex-1 py-2.5 sm:py-3 px-3 sm:px-4 rounded-xl sm:rounded-2xl text-[11px] sm:text-xs font-bold text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 flex items-center justify-center gap-1.5 active:scale-95 transition cursor-pointer"
               >
@@ -124,6 +129,7 @@ export const ResultModal: React.FC<ResultModalProps> = ({
               </button>
             ) : (
               <button
+                id="result-modal-finish-btn"
                 onClick={onClose}
                 className="flex-1 py-2.5 sm:py-3 px-3 sm:px-4 rounded-xl sm:rounded-2xl text-[11px] sm:text-xs font-bold text-white bg-amber-600 hover:bg-amber-700 flex items-center justify-center gap-1.5 active:scale-95 transition cursor-pointer"
               >

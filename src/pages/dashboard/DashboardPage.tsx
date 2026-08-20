@@ -62,10 +62,11 @@ const hoverTitleClass = (id: number) => {
 
 export function DashboardPage({ onSelectLevel, isSoundOn, onToggleSound, onPlayClick }: DashboardPageProps) {
   return (
-    <div className="h-screen w-full flex flex-col justify-center items-center relative overflow-hidden antialiased py-0 px-0 lg:py-6 lg:px-6 xl:py-8 xl:px-8 select-none">
+    <div id="dashboard-page" className="h-screen w-full flex flex-col justify-center items-center relative overflow-hidden antialiased py-0 px-0 lg:py-6 lg:px-6 xl:py-8 xl:px-8 select-none">
       {/* Background Image - Full screen */}
-      <div className="absolute inset-0 z-0 pointer-events-none select-none">
+      <div id="dashboard-bg-container" className="absolute inset-0 z-0 pointer-events-none select-none">
         <img
+          id="dashboard-bg-img"
           src={dashboardBg}
           alt="Latar Belakang Level"
           className="w-full h-full object-cover"
@@ -73,46 +74,48 @@ export function DashboardPage({ onSelectLevel, isSoundOn, onToggleSound, onPlayC
       </div>
       
       {/* Logo Pusbuk - Pojok Kiri Atas */}
-      <div className="absolute top-2.5 left-2.5 sm:top-4 sm:left-4 md:top-6 md:left-6 z-30">
+      <div id="dashboard-logo-container" className="absolute top-2.5 left-2.5 sm:top-4 sm:left-4 md:top-6 md:left-6 2xl:top-10 2xl:left-10 z-30">
         <img 
+          id="dashboard-logo"
           src={logoPusbuk} 
           alt="Logo Pusbuk" 
-          className="h-7 sm:h-10 md:h-14 lg:h-18 w-auto object-contain transition-transform duration-300 hover:scale-105"
+          className="h-7 sm:h-10 md:h-14 lg:h-18 2xl:h-28 w-auto object-contain transition-transform duration-300 hover:scale-105"
         />
       </div>
 
       {/* Top-right Corner Buttons: Sound + Cara Main */}
-      <div className="absolute top-2.5 right-2.5 sm:top-4 sm:right-4 md:top-6 md:right-6 z-30 flex items-center gap-2 sm:gap-2.5">
+      <div id="dashboard-sound-container" className="absolute top-2.5 right-2.5 sm:top-4 sm:right-4 md:top-6 md:right-6 2xl:top-10 2xl:right-10 z-30 flex items-center gap-2 sm:gap-2.5">
         {/* Sound Toggle */}
         <button
+          id="dashboard-sound-btn"
           onClick={() => {
             onPlayClick();
             onToggleSound();
           }}
-          className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-white/70 backdrop-blur-md border border-slate-200/60 rounded-xl sm:rounded-2xl flex items-center justify-center text-slate-500 hover:text-amber-600 hover:bg-white/90 hover:border-amber-200/60 hover:shadow-lg hover:shadow-amber-500/10 transition-all duration-300 active:scale-90 cursor-pointer group"
+          className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 2xl:w-20 2xl:h-20 bg-white/70 backdrop-blur-md border border-slate-200/60 rounded-xl sm:rounded-2xl 2xl:rounded-3xl flex items-center justify-center text-slate-500 hover:text-amber-600 hover:bg-white/90 hover:border-amber-200/60 hover:shadow-lg hover:shadow-amber-500/10 transition-all duration-300 active:scale-90 cursor-pointer group"
           title={isSoundOn ? 'Matikan Suara' : 'Nyalakan Suara'}
         >
           {isSoundOn ? (
-            <Volume2 className="w-4 h-4 sm:w-5 sm:h-5 md:w-5.5 md:h-5.5 group-hover:scale-110 transition-transform" />
+            <Volume2 className="w-4 h-4 sm:w-5 sm:h-5 md:w-5.5 md:h-5.5 2xl:w-10 2xl:h-10 group-hover:scale-110 transition-transform" />
           ) : (
-            <VolumeX className="w-4 h-4 sm:w-5 sm:h-5 md:w-5.5 md:h-5.5 group-hover:scale-110 transition-transform text-slate-400" />
+            <VolumeX className="w-4 h-4 sm:w-5 sm:h-5 md:w-5.5 md:h-5.5 2xl:w-10 2xl:h-10 group-hover:scale-110 transition-transform text-slate-400" />
           )}
         </button>
       </div>
 
       {/* Centered Content Wrapper - Worksheet-styled border is only active on tablet/desktop (sm: and up), transparent on mobile */}
-      <div className="z-10 w-full max-w-5xl bg-transparent lg:bg-white/50 lg:backdrop-blur-md border-0 lg:border-[3px] md:border-[5px] border-transparent lg:border-[#0f5a31] rounded-none lg:rounded-2xl md:rounded-[24px] shadow-none lg:shadow-2xl lg:overflow-hidden flex flex-col p-2 lg:p-10 justify-center min-h-0 animate-fade-in-up transition-all duration-500">
+      <div id="dashboard-card" className="z-10 w-full max-w-5xl 2xl:max-w-6xl bg-transparent lg:bg-white/50 lg:backdrop-blur-md border-0 lg:border-[3px] md:border-[5px] 2xl:border-[7px] border-transparent lg:border-[#0f5a31] rounded-none lg:rounded-2xl md:rounded-[24px] 2xl:rounded-[36px] shadow-none lg:shadow-2xl lg:overflow-hidden flex flex-col p-2 lg:p-10 2xl:p-14 justify-center min-h-0 animate-fade-in-up transition-all duration-500">
         
         {/* Header - Styled as a green-bordered card on mobile only, transparent on tablet/desktop */}
-        <header className="w-fit lg:max-w-none mx-auto flex flex-col items-center text-center shrink-0 bg-white/80 backdrop-blur-md border-[3px] border-[#0f5a31] rounded-2xl shadow-md py-1.5 px-4 mb-2 lg:bg-transparent lg:backdrop-blur-none lg:border-0 lg:shadow-none lg:p-0 lg:mb-0">
-          <h1 className="text-base sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-black font-display tracking-wide text-slate-800 leading-tight drop-shadow-sm select-none">
+        <header id="dashboard-header" className="w-fit lg:max-w-none mx-auto flex flex-col items-center text-center shrink-0 bg-white/80 backdrop-blur-md border-[3px] border-[#0f5a31] rounded-2xl shadow-md py-1.5 px-4 mb-2 lg:bg-transparent lg:backdrop-blur-none lg:border-0 lg:shadow-none lg:p-0 lg:mb-6 xl:mb-8 2xl:mb-10">
+          <h1 id="dashboard-title" className="text-base sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-black font-display tracking-wide text-slate-800 leading-tight drop-shadow-sm select-none">
             Pilih Level
           </h1>
         </header>
 
         {/* Level Cards */}
-        <main className="w-full min-h-0">
-          <div className="w-full flex flex-col grid grid-cols-3 gap-3 sm:gap-4 lg:gap-5 px-0 pb-0 min-h-0">
+        <main id="dashboard-main" className="w-full min-h-0">
+          <div id="dashboard-level-grid" className="w-full flex flex-col grid grid-cols-3 gap-3 sm:gap-4 lg:gap-5 2xl:gap-7 px-0 pb-0 min-h-0">
             {levels.map((level) => {
               const diff = difficultyLabel(level.id);
               const theme = levelGradients(level.id);
@@ -121,49 +124,50 @@ export function DashboardPage({ onSelectLevel, isSoundOn, onToggleSound, onPlayC
               return (
                 <div
                   key={level.id}
+                  id={`dashboard-level-card-${level.id}`}
                   onClick={() => onSelectLevel(level.id)}
-                  className={`${theme.cardBg} rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 md:p-6 text-left flex flex-col justify-between shadow-sm hover:shadow-xl ${theme.hoverBorder} ${theme.hoverGlow} hover:-translate-y-1.5 transition-all duration-500 active:scale-98 group cursor-pointer relative overflow-hidden w-full md:w-auto min-h-[135px] sm:min-h-[180px] md:min-h-[250px]`}
+                  className={`${theme.cardBg} rounded-2xl sm:rounded-3xl 2xl:rounded-4xl p-3.5 sm:p-5 md:p-6 2xl:p-8 text-left flex flex-col justify-between shadow-sm hover:shadow-xl ${theme.hoverBorder} ${theme.hoverGlow} hover:-translate-y-1.5 transition-all duration-500 active:scale-98 group cursor-pointer relative overflow-hidden w-full md:w-auto min-h-[135px] sm:min-h-[180px] md:min-h-[250px] 2xl:min-h-[300px]`}
                 >
 
                   {/* Card Top: Level number + difficulty */}
                   <div className="flex items-start justify-between shrink-0">
                     <div className="flex flex-col">
-                      <span className="text-[8px] lg:text-[9px] font-black text-slate-400 tracking-wider uppercase font-display mb-0.5">
+                      <span className="text-[8px] lg:text-[9px] 2xl:text-xs font-black text-slate-400 tracking-wider uppercase font-display mb-0.5">
                         Level
                       </span>
-                      <span className={`text-xl lg:text-4xl font-black font-display leading-none bg-gradient-to-br ${theme.bg} bg-clip-text text-transparent`}>
+                      <span className={`text-xl lg:text-4xl 2xl:text-5xl font-black font-display leading-none bg-gradient-to-br ${theme.bg} bg-clip-text text-transparent`}>
                         {level.id < 10 ? `0${level.id}` : level.id}
                       </span>
                     </div>
-                    <span className={`text-[8px] lg:text-sm font-black px-2 sm:px-3 py-0.5 lg:py-1 rounded-full ${diff.color} `}>
+                    <span className={`text-[8px] lg:text-sm 2xl:text-base font-black px-2 sm:px-3 py-0.5 lg:py-1 2xl:py-1.5 2xl:px-4 rounded-full ${diff.color} `}>
                       {diff.label}
                     </span>
                   </div>
 
                   {/* Level Title */}
-                  <div className="my-2 lg:my-5 shrink-0">
-                     <h3 className={`font-black text-slate-800 text-xs sm:text-sm md:text-lg leading-tight font-display tracking-wide ${hoverTitleClass(level.id)} transition-colors pr-6 sm:pr-10`}>
+                  <div className="my-2 lg:my-5 2xl:my-6 shrink-0">
+                     <h3 id={`dashboard-level-title-${level.id}`} className={`font-black text-slate-800 text-xs sm:text-sm md:text-lg 2xl:text-2xl leading-tight font-display tracking-wide ${hoverTitleClass(level.id)} transition-colors pr-6 sm:pr-10`}>
                       {level.title.replace(/Level \d+: /, '')}
                     </h3>
                   </div>
 
                   {/* Stats + Play Button */}
                   <div className="mt-auto shrink-0">
-                    <div className="flex flex-wrap gap-1 sm:gap-1.5 mb-2 lg:mb-4">
-                      <span className={`inline-flex items-center gap-1 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-lg sm:rounded-xl ${theme.statsBg} font-bold text-[8px] lg:text-xs`}>
+                    <div className="flex flex-wrap gap-1 sm:gap-1.5 2xl:gap-2 mb-2 lg:mb-4 2xl:mb-6">
+                      <span className={`inline-flex items-center gap-1 px-2 sm:px-2.5 2xl:px-3.5 py-1 sm:py-1.5 2xl:py-2 rounded-lg sm:rounded-xl 2xl:rounded-2xl ${theme.statsBg} font-bold text-[8px] lg:text-xs 2xl:text-sm`}>
                         {housesOnlyCount} Rumah + 1 Toko Roti
                       </span>
                       {level.timeLimitMinutes && (
-                        <span className={`inline-flex items-center gap-1 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-lg sm:rounded-xl ${theme.statsBg} font-bold text-[8px] lg:text-xs`}>
+                        <span className={`inline-flex items-center gap-1 px-2 sm:px-2.5 2xl:px-3.5 py-1 sm:py-1.5 2xl:py-2 rounded-lg sm:rounded-xl 2xl:rounded-2xl ${theme.statsBg} font-bold text-[8px] lg:text-xs 2xl:text-sm`}>
                           ⏱️ {level.timeLimitMinutes} Menit
                         </span>
                       )}
                     </div>
 
-                    <button className={`w-full py-1.5 sm:py-2.5 pl-2 sm:pl-5 pr-1.5 sm:pr-2.5 rounded-lg sm:rounded-2xl text-white font-bold text-[9px] sm:text-xs flex items-center justify-between shadow-md transition-all duration-300 hover:shadow-lg active:scale-98 cursor-pointer group/btn border border-white/10 ${theme.btnBg}`}>
+                    <button id={`dashboard-level-play-btn-${level.id}`} className={`w-full py-1.5 sm:py-2.5 2xl:py-3.5 pl-2 sm:pl-5 2xl:pl-6 pr-1.5 sm:pr-2.5 2xl:pr-4 rounded-lg sm:rounded-2xl 2xl:rounded-3xl text-white font-bold text-[9px] sm:text-xs 2xl:text-base flex items-center justify-between shadow-md transition-all duration-300 hover:shadow-lg active:scale-98 cursor-pointer group/btn border border-white/10 ${theme.btnBg}`}>
                       <span className="font-display tracking-wider">Mulai Bermain</span>
-                      <span className="w-5 h-5 sm:w-7 sm:h-7 bg-white/20 rounded-full flex items-center justify-center group-hover/btn:bg-white/35 group-hover/btn:translate-x-0.5 transition-all shrink-0">
-                        <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
+                      <span className="w-5 h-5 sm:w-7 sm:h-7 2xl:w-9 2xl:h-9 bg-white/20 rounded-full flex items-center justify-center group-hover/btn:bg-white/35 group-hover/btn:translate-x-0.5 transition-all shrink-0">
+                        <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 2xl:w-5 2xl:h-5 text-white" />
                       </span>
                     </button>
                   </div>

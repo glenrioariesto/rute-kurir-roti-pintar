@@ -87,19 +87,22 @@ export const LevelIntroOverlay: React.FC<LevelIntroOverlayProps> = ({ levelId, o
 
   return (
     <div
+      id="level-intro-overlay"
       className="fixed inset-0 z-[100] flex flex-col items-center select-none"
       style={overlayStyle}
       onClick={handleDismiss}
     >
       {/* Dark backdrop with blur */}
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+      <div id="level-intro-backdrop" className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
 
       {/* Toast - center top area */}
       <div
+        id="level-intro-toast-container"
         className="relative z-10 mt-[6vh] sm:mt-[8vh] flex-shrink-0"
         style={toastStyle}
       >
         <img
+          id="level-intro-toast-img"
           src={toastSrc}
           alt={`Level ${levelId}`}
           className="h-12 sm:h-16 md:h-20 lg:h-24 w-auto object-contain drop-shadow-[0_4px_20px_rgba(0,0,0,0.4)]"
@@ -110,11 +113,13 @@ export const LevelIntroOverlay: React.FC<LevelIntroOverlayProps> = ({ levelId, o
       {/* Soal - center center */}
       {showSoal && (
         <div
+          id="level-intro-soal-container"
           className="relative z-10 flex-1 flex items-center justify-center px-4"
           style={soalStyle}
         >
           <div className="relative">
             <img
+              id="level-intro-soal-img"
               src={soalSrc}
               alt={`Soal Level ${levelId}`}
               className="max-w-[90vw] sm:max-w-[70vw] md:max-w-[500px] lg:max-w-[560px] w-auto object-contain drop-shadow-[0_8px_32px_rgba(0,0,0,0.35)]"
@@ -126,7 +131,7 @@ export const LevelIntroOverlay: React.FC<LevelIntroOverlayProps> = ({ levelId, o
 
       {/* Tap to continue hint */}
       {phase === 'soal-visible' && (
-        <div className="relative z-10 mb-[6vh] animate-pulse">
+        <div id="level-intro-hint" className="relative z-10 mb-[6vh] animate-pulse">
           <span className="text-white/80 text-xs sm:text-sm md:text-base font-semibold tracking-wider uppercase drop-shadow-md">
             Ketuk untuk mulai
           </span>

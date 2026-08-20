@@ -19,15 +19,15 @@ export const DistanceCalculator: React.FC<DistanceCalculatorProps> = ({
   const isOptimal = diff <= 0.05;
 
   return (
-    <div className="bg-white rounded-2xl p-5 border border-slate-150 shadow-sm">
-      <h4 className="text-sm font-bold text-slate-800 mb-3.5 flex items-center gap-1.5">
+    <div id="distance-calculator-container" className="bg-white rounded-2xl p-5 border border-slate-150 shadow-sm">
+      <h4 id="distance-calculator-title" className="text-sm font-bold text-slate-800 mb-3.5 flex items-center gap-1.5">
         <Target className="w-4.5 h-4.5 text-amber-500" />
         <span>Uji Efisiensi Rute (Perbandingannya)</span>
       </h4>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Your Route kilometer card */}
-        <div className="bg-slate-50 border border-slate-150 rounded-xl p-4 flex flex-col justify-between">
+        <div id="distance-calculator-user-card" className="bg-slate-50 border border-slate-150 rounded-xl p-4 flex flex-col justify-between">
           <div>
             <span className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Rute Kamu</span>
             <p className="text-2xl font-extrabold text-slate-700 font-mono mt-1">
@@ -40,7 +40,7 @@ export const DistanceCalculator: React.FC<DistanceCalculatorProps> = ({
         </div>
 
         {/* Optimal TSP route kilometer card */}
-        <div className="bg-amber-50/40 border border-amber-100 rounded-xl p-4 flex flex-col justify-between">
+        <div id="distance-calculator-optimal-card" className="bg-amber-50/40 border border-amber-100 rounded-xl p-4 flex flex-col justify-between">
           <div>
             <span className="text-[10px] uppercase tracking-wider text-amber-500 font-semibold text-shadow-sm">Rute Terbaik</span>
             <p className="text-2xl font-extrabold text-amber-700 font-mono mt-1">
@@ -53,7 +53,7 @@ export const DistanceCalculator: React.FC<DistanceCalculatorProps> = ({
         </div>
 
         {/* Diff metrics calculated */}
-        <div className="bg-gradient-to-br from-amber-50 to-orange-50/50 border border-amber-200 rounded-xl p-4 flex flex-col justify-between">
+        <div id="distance-calculator-diff-card" className="bg-gradient-to-br from-amber-50 to-orange-50/50 border border-amber-200 rounded-xl p-4 flex flex-col justify-between">
           <div>
             <span className="text-[10px] uppercase tracking-wider text-amber-600 font-semibold">Selisih Jarak</span>
             <p

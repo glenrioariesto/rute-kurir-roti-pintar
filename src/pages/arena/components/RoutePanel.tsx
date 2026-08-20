@@ -60,22 +60,22 @@ export const RoutePanel: React.FC<RoutePanelProps> = ({
   }
 
   return (
-    <div className="flex flex-col gap-5 h-full">
+    <div id="route-panel-container" className="flex flex-col gap-5 h-full">
       {/* 1. MANIFEST ROUTE TIMELINE */}
-      <div className="bg-white rounded-2xl p-2 md:p-4 border border-slate-150 flex-1 flex flex-col min-h-[140px] shadow-sm">
-        <h4 className="text-sm font-bold text-slate-800 mb-2 flex items-center gap-1.5">
+      <div id="route-panel-timeline-card" className="bg-white rounded-2xl p-2 md:p-4 border border-slate-150 flex-1 flex flex-col min-h-[140px] shadow-sm">
+        <h4 id="route-panel-timeline-title" className="text-sm font-bold text-slate-800 mb-2 flex items-center gap-1.5">
           <Sparkles className="w-4 h-4 text-amber-500" />
           <span>Alur Perjalanan Saat Ini</span>
         </h4>
 
         {selectedRoute.length <= 1 ? (
-          <div className="flex-1 flex flex-col items-center justify-center text-center p-4">
+          <div id="route-panel-timeline-empty" className="flex-1 flex flex-col items-center justify-center text-center p-4">
             <p className="text-xs text-slate-400 max-w-[200px]">
               Silakan klik titik lokasi di peta sebelah kiri untuk mulai mengantar.
             </p>
           </div>
         ) : (
-          <div className="flex-1 overflow-y-auto pr-1">
+          <div id="route-panel-timeline-list" className="flex-1 overflow-y-auto pr-1">
             <div className="flex flex-wrap items-center gap-x-2 gap-y-3 py-2">
               {legs.map((leg, index) => {
                 const isToko = leg.nodeId === 'Toko';
@@ -83,6 +83,7 @@ export const RoutePanel: React.FC<RoutePanelProps> = ({
                 return (
                   <React.Fragment key={index}>
                     <div
+                      id={`route-panel-leg-node-${index}`}
                       className={`px-3 py-1.5 rounded-xl text-xs font-bold shadow-xs border flex items-center gap-1 transition-all ${
                         isToko
                            ? 'bg-amber-100 text-amber-900 border-amber-200'
@@ -110,13 +111,13 @@ export const RoutePanel: React.FC<RoutePanelProps> = ({
 
         {/* Short metrics feedback inside route timeline block */}
         {selectedRoute.length > 1 && (
-          <div className="mt-4 pt-3 border-t border-slate-100 grid grid-cols-2 gap-3 bg-slate-50/50 p-2.5 rounded-xl">
+          <div id="route-panel-timeline-metrics" className="mt-4 pt-3 border-t border-slate-100 grid grid-cols-2 gap-3 bg-slate-50/50 p-2.5 rounded-xl">
             {/* Live Distance count */}
             <div className="flex items-center gap-2">
               <MapPin className="w-4 h-4 text-amber-650" />
               <div>
                 <p className="text-[10px] text-slate-400 font-medium uppercase leading-none">Jarak Tempuh</p>
-                <p className="text-sm font-extrabold text-slate-700 font-mono mt-0.5">
+                <p id="route-panel-metric-distance" className="text-sm font-extrabold text-slate-700 font-mono mt-0.5">
                   {currentMetrics.distance} m
                 </p>
               </div>
@@ -127,7 +128,7 @@ export const RoutePanel: React.FC<RoutePanelProps> = ({
               <Clock className="w-4 h-4 text-emerald-600" />
               <div>
                 <p className="text-[10px] text-slate-400 font-medium uppercase leading-none">Waktu Tempuh</p>
-                <p className="text-sm font-extrabold text-slate-700 font-mono mt-0.5">
+                <p id="route-panel-metric-time" className="text-sm font-extrabold text-slate-700 font-mono mt-0.5">
                   {formatTime(currentMetrics.time)}
                 </p>
               </div>
@@ -137,15 +138,16 @@ export const RoutePanel: React.FC<RoutePanelProps> = ({
       </div>
 
       {/* 2. KECEPATAN PENGIRIMAN (SPEED CONTROL) */}
-      <div className="bg-white rounded-2xl p-4 border border-slate-150 shadow-sm flex flex-col gap-3">
+      <div id="route-panel-speed-card" className="bg-white rounded-2xl p-4 border border-slate-150 shadow-sm flex flex-col gap-3">
         <h4 className="text-sm font-bold text-slate-800 flex items-center gap-1.5">
           <Truck className="w-4 h-4 text-indigo-600" />
           <span>Kecepatan Kirim</span>
         </h4>
-        <div className="grid grid-cols-3 gap-2 bg-slate-50 p-1 rounded-xl border border-slate-200">
+        <div id="route-panel-speed-buttons" className="grid grid-cols-3 gap-2 bg-slate-50 p-1 rounded-xl border border-slate-200">
           {[1, 2, 3].map((s) => (
             <button
               key={s}
+              id={`route-panel-speed-btn-${s}x`}
               type="button"
               onClick={() => onChangeSpeed(s)}
               disabled={isDelivering}
@@ -163,7 +165,7 @@ export const RoutePanel: React.FC<RoutePanelProps> = ({
 
       {/* 3. COURIER STATS GAUGES (FOR CONSTRAINTS) */}
       {level.timeLimitMinutes && (
-        <div className="bg-slate-900 text-slate-100 rounded-2xl p-4 border border-slate-805 flex flex-col gap-3 shadow-md">
+        <div id="route-panel-constraints-card" className="bg-slate-900 text-slate-100 rounded-2xl p-4 border border-slate-805 flex flex-col gap-3 shadow-md">
           <h4 className="text-xs font-bold text-amber-400 tracking-wider uppercase">
             Indikator Batasan (Constraints)
           </h4>
@@ -198,8 +200,9 @@ export const RoutePanel: React.FC<RoutePanelProps> = ({
       )}
 
       {/* 4. BUTTONS BOX */}
-      <div className="grid grid-cols-2 gap-2 mt-auto">
+      <div id="route-panel-actions" className="grid grid-cols-2 gap-2 mt-auto">
         <button
+          id="route-panel-undo-btn"
           onClick={onUndo}
           disabled={selectedRoute.length <= 1 || isDelivering}
           className="py-3 px-4 rounded-xl font-bold text-xs text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-300 active:scale-95 disabled:opacity-50 disabled:pointer-events-none transition flex items-center justify-center gap-2"
@@ -209,6 +212,7 @@ export const RoutePanel: React.FC<RoutePanelProps> = ({
         </button>
 
         <button
+          id="route-panel-reset-btn"
           onClick={onReset}
           disabled={selectedRoute.length <= 1 || isDelivering}
           className="py-3 px-4 rounded-xl font-bold text-xs text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-300 active:scale-95 disabled:opacity-50 disabled:pointer-events-none transition flex items-center justify-center gap-2"
@@ -218,6 +222,7 @@ export const RoutePanel: React.FC<RoutePanelProps> = ({
         </button>
 
         <button
+          id="route-panel-deliver-btn"
           onClick={onDeliver}
           disabled={selectedRoute.length <= 1 || isDelivering}
           className="col-span-2 py-3.5 px-6 rounded-xl font-bold text-sm text-white bg-amber-600 hover:bg-amber-700 active:scale-95 transition flex items-center justify-center gap-2 shadow-md shadow-amber-650/20 disabled:opacity-50 disabled:pointer-events-none"

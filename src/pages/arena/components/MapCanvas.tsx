@@ -297,11 +297,12 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
   }
 
   return (
-    <div className="relative w-full h-full overflow-hidden select-none" style={{ backgroundImage: `url(${ASSETS.canvasBg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+    <div id="arena-map-wrapper" className="relative w-full h-full overflow-hidden select-none" style={{ backgroundImage: `url(${ASSETS.canvasBg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
       {/* Top Left Header Actions Container */}
-      <div className="absolute top-3 left-3 z-20 flex items-start gap-1.5 sm:gap-2">
+      <div id="arena-header-left" className="absolute top-3 left-3 z-20 flex items-start gap-1.5 sm:gap-2">
         {/* Back button */}
         <button
+          id="arena-back-btn"
           onClick={onBack}
           className="bg-white/60 backdrop-blur-md border border-slate-200/80 rounded-lg p-1.5 shadow-sm hover:bg-white/85 active:scale-95 transition text-slate-600 cursor-pointer animate-fade-in"
           title="Kembali"
@@ -311,6 +312,7 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
 
         {/* Sound Toggle */}
         <button
+          id="arena-sound-btn"
           onClick={() => {
             onPlayClick?.();
             onToggleSound();
@@ -327,6 +329,7 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
 
         {/* Help Button */}
         <button
+          id="arena-help-btn"
           onClick={() => {
             onPlayClick?.();
             onHelpClick?.();
@@ -339,8 +342,9 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
       </div>
 
       {/* Level Toast Badge - centered between left and right headers */}
-      <div className="absolute top-2.5 left-1/2 -translate-x-1/2 z-20 pointer-events-none animate-fade-in">
+      <div id="arena-level-toast-container" className="absolute top-2.5 left-1/2 -translate-x-1/2 z-20 pointer-events-none animate-fade-in">
         <img
+          id="arena-level-toast-img"
           src={`${BASE}level-${level.id}-toast.webp`}
           alt={`Level ${level.id}`}
           className="h-8 lg:h-20 w-auto object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.25)]"
@@ -349,9 +353,10 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
       </div>
 
       {/* Top Right Header Actions Container */}
-      <div className="absolute top-3 right-3 z-20 flex items-center gap-1.5 sm:gap-2">
+      <div id="arena-header-right" className="absolute top-3 right-3 z-20 flex items-center gap-1.5 sm:gap-2">
         {/* Route panel button */}
         <button
+          id="arena-toggle-route-btn"
           onClick={() => {
             onPlayClick?.();
             setShowRouteTimeline(prev => !prev);
@@ -367,6 +372,7 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
 
         {/* Reset button */}
         <button
+          id="arena-reset-view-btn"
           onClick={() => {
             onPlayClick?.();
             resetView();
@@ -379,12 +385,13 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
 
       {/* Route Timeline Floating Panel */}
       {showRouteTimeline && (
-        <div className="absolute top-14 left-3 right-3 sm:left-auto sm:right-3 z-20 w-[calc(100%-24px)] sm:w-80 max-h-[60vh] bg-white/75 backdrop-blur-md border border-slate-200/80 rounded-2xl p-3 sm:p-4 shadow-lg flex flex-col gap-2.5 overflow-hidden animate-fade-in">
+        <div id="arena-route-timeline-panel" className="absolute top-14 left-3 right-3 sm:left-auto sm:right-3 z-20 w-[calc(100%-24px)] sm:w-80 max-h-[60vh] bg-white/75 backdrop-blur-md border border-slate-200/80 rounded-2xl p-3 sm:p-4 shadow-lg flex flex-col gap-2.5 overflow-hidden animate-fade-in">
           <div className="flex items-center justify-between border-b border-slate-100 pb-2 shrink-0">
             <h4 className="text-[10px] sm:text-xs font-black text-slate-800 uppercase tracking-wider flex items-center gap-1.5 font-display">
               <span>📋 Alur Perjalanan ({legs.length > 0 ? legs.length - 1 : 0} Kunjungan)</span>
             </h4>
             <button
+              id="arena-close-route-timeline-btn"
               onClick={() => setShowRouteTimeline(false)}
               className="text-slate-400 hover:text-slate-600 transition text-[8.5px] md:text-[11px] font-bold font-display"
             >
@@ -733,8 +740,9 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
       </div>
 
       {/* Soal Badge - mobile: above-right of bottom controls, desktop: right of centered controls */}
-      <div className="absolute z-20 bottom-16 right-3 lg:bottom-3 pointer-events-none animate-fade-in">
+      <div id="arena-soal-container" className="absolute z-20 bottom-16 right-3 lg:bottom-3 pointer-events-none animate-fade-in">
         <img
+          id="arena-soal-img"
           src={`${BASE}soal-${level.id}.webp`}
           alt={`Soal Level ${level.id}`}
           className="h-12 md:h-auto sm:max-w-[180px] lg:max-w-[220px] 2xl:max-w-[450px] w-auto object-contain drop-shadow-[0_2px_10px_rgba(0,0,0,0.2)] rounded-lg"
@@ -744,12 +752,13 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
 
       {/* Floating Controls Overlay at the bottom */}
       {isControlsExpanded ? (
-        <div className="absolute bottom-3 left-3 right-3 z-20 lg:left-1/2 lg:-translate-x-1/2 lg:max-w-xl lg:bg-white/50 lg:backdrop-blur-md lg:border border-slate-200/80 rounded-xl lg:p-2.5 lg:shadow-lg flex items-center justify-between gap-2 sm:gap-3 transition-all animate-fade-in">
+        <div id="arena-bottom-controls" className="absolute bottom-3 left-3 right-3 z-20 lg:left-1/2 lg:-translate-x-1/2 lg:max-w-xl lg:bg-white/50 lg:backdrop-blur-md lg:border border-slate-200/80 rounded-xl lg:p-2.5 lg:shadow-lg flex items-center justify-between gap-2 sm:gap-3 transition-all animate-fade-in">
           {/* Speed selection */}
-          <div className="flex items-center gap-0.5 sm:gap-1 bg-slate-100/40 backdrop-blur-xs p-0.5 rounded-lg sm:rounded-xl border border-slate-200/65 shrink-0">
+          <div id="arena-speed-controls" className="flex items-center gap-0.5 sm:gap-1 bg-slate-100/40 backdrop-blur-xs p-0.5 rounded-lg sm:rounded-xl border border-slate-200/65 shrink-0">
             {[1, 2, 3].map((s) => (
               <button
                 key={s}
+                id={`arena-speed-btn-${s}x`}
                 type="button"
                 onClick={() => {
                   onPlayClick?.();
@@ -767,8 +776,9 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
           </div>
 
           {/* Actions group */}
-          <div className="flex items-center gap-1 sm:gap-1.5 font-display tracking-wider bg-white/50 lg:bg-transparent backdrop-blur-md lg:backdrop-blur-none border lg:border-none border-slate-200/80 rounded-xl shadow-sm lg:shadow-none">
+          <div id="arena-actions-group" className="flex items-center gap-1 sm:gap-1.5 font-display tracking-wider bg-white/50 lg:bg-transparent backdrop-blur-md lg:backdrop-blur-none border lg:border-none border-slate-200/80 rounded-xl shadow-sm lg:shadow-none">
             <button
+              id="arena-undo-btn"
               onClick={() => {
                 playUndoSound();
                 onUndo();
@@ -781,6 +791,7 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
             </button>
 
             <button
+              id="arena-reset-btn"
               onClick={() => {
                 playResetSound();
                 onReset();
@@ -794,6 +805,7 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
 
             {isDelivering ? (
               <button
+                id="arena-stop-deliver-btn"
                 onClick={() => {
                   playUndoSound();
                   onStopDeliver();
@@ -805,6 +817,7 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
               </button>
             ) : (
               <button
+                id="arena-deliver-btn"
                 onClick={() => {
                   playDeliverSound();
                   onDeliver();
@@ -819,6 +832,7 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
 
             {/* Collapse button */}
             <button
+              id="arena-collapse-controls-btn"
               onClick={() => {
                 onPlayClick?.();
                 setIsControlsExpanded(false);
@@ -832,6 +846,7 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
         </div>
       ) : (
         <button
+          id="arena-expand-controls-btn"
           onClick={() => {
             onPlayClick?.();
             setIsControlsExpanded(true);

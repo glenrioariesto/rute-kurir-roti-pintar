@@ -10,8 +10,9 @@ export const CtExplanationPanel: React.FC<CtExplanationPanelProps> = ({ level })
   const [isExpanded, setIsExpanded] = useState(true);
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-150 p-5 shadow-sm">
+    <div id="ct-explanation-panel" className="bg-white rounded-2xl border border-slate-150 p-5 shadow-sm">
       <div
+        id="ct-explanation-header"
         className="flex items-center justify-between cursor-pointer"
         onClick={() => setIsExpanded(!isExpanded)}
       >
@@ -20,7 +21,7 @@ export const CtExplanationPanel: React.FC<CtExplanationPanelProps> = ({ level })
             <BookOpen className="w-5 h-5" />
           </div>
           <div>
-            <h4 className="text-sm font-bold text-slate-800 leading-tight">
+            <h4 id="ct-explanation-title" className="text-sm font-bold text-slate-800 leading-tight">
               Pojok Berpikir Komputasional (CT)
             </h4>
             <p className="text-[8.5px] md:text-[11px] text-slate-400">
@@ -29,19 +30,19 @@ export const CtExplanationPanel: React.FC<CtExplanationPanelProps> = ({ level })
           </div>
         </div>
 
-        <button className="text-slate-400 hover:text-slate-600 transition">
+        <button id="ct-explanation-toggle-btn" className="text-slate-400 hover:text-slate-600 transition">
           {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
         </button>
       </div>
 
       {isExpanded && (
-        <div className="mt-5 flex flex-col gap-5 animate-fade-in">
+        <div id="ct-explanation-content" className="mt-5 flex flex-col gap-5 animate-fade-in">
           
           {/* Level CT Principles Grid list */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             
             {/* DECOMPOSITION */}
-            <div className="flex gap-3 bg-indigo-50/20 p-3.5 rounded-xl border border-indigo-100/30">
+            <div id="ct-explanation-decomposition" className="flex gap-3 bg-indigo-50/20 p-3.5 rounded-xl border border-indigo-100/30">
               <span className="text-xl shrink-0 select-none">🧩</span>
               <div>
                 <h5 className="text-xs font-extrabold text-indigo-900 uppercase">
@@ -54,7 +55,7 @@ export const CtExplanationPanel: React.FC<CtExplanationPanelProps> = ({ level })
             </div>
 
             {/* PATTERN RECOGNITION */}
-            <div className="flex gap-3 bg-teal-50/20 p-3.5 rounded-xl border border-teal-100/30">
+            <div id="ct-explanation-pattern-recognition" className="flex gap-3 bg-teal-50/20 p-3.5 rounded-xl border border-teal-100/30">
               <span className="text-xl shrink-0 select-none">👁️</span>
               <div>
                 <h5 className="text-xs font-extrabold text-teal-900 uppercase">
@@ -67,7 +68,7 @@ export const CtExplanationPanel: React.FC<CtExplanationPanelProps> = ({ level })
             </div>
 
             {/* ABSTRACTION */}
-            <div className="flex gap-3 bg-pink-50/20 p-3.5 rounded-xl border border-pink-100/30">
+            <div id="ct-explanation-abstraction" className="flex gap-3 bg-pink-50/20 p-3.5 rounded-xl border border-pink-100/30">
               <span className="text-xl shrink-0 select-none">📐</span>
               <div>
                 <h5 className="text-xs font-extrabold text-pink-900 uppercase">
@@ -80,7 +81,7 @@ export const CtExplanationPanel: React.FC<CtExplanationPanelProps> = ({ level })
             </div>
 
             {/* ALGORITHM */}
-            <div className="flex gap-3 bg-amber-50/20 p-3.5 rounded-xl border border-amber-100/30">
+            <div id="ct-explanation-algorithm" className="flex gap-3 bg-amber-50/20 p-3.5 rounded-xl border border-amber-100/30">
               <span className="text-xl shrink-0 select-none">⛓️</span>
               <div>
                 <h5 className="text-xs font-extrabold text-amber-900 uppercase">
@@ -95,7 +96,7 @@ export const CtExplanationPanel: React.FC<CtExplanationPanelProps> = ({ level })
           </div>
 
           {/* Real World Application explanation */}
-          <div className="bg-slate-50 p-4 rounded-xl border border-slate-150 flex gap-3">
+          <div id="ct-explanation-real-world" className="bg-slate-50 p-4 rounded-xl border border-slate-150 flex gap-3">
             <Compass className="w-5 h-5 text-slate-500 shrink-0 mt-0.5 animate-spin-slow" />
             <div>
               <h5 className="text-xs font-bold text-slate-800 uppercase flex items-center gap-1.5">
