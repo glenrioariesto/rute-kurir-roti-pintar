@@ -1,4 +1,5 @@
-import { LevelConfig, Connection } from '@/types';
+import { LevelConfig } from '@/types';
+import { optimalAnswers } from '@/answer';
 
 export function calculateRouteMetrics(route: string[], level: LevelConfig) {
   if (route.length < 2) {
@@ -52,6 +53,19 @@ export function visitsAllHouses(route: string[], level: LevelConfig): boolean {
  * all houses in the level at least once. It respects blocked connections.
  */
 export function findOptimalRoute(level: LevelConfig): { route: string[]; distance: number; time: number } {
+  // Check if predefined official optimal route exists for this level
+  const officialAnswer = optimalAnswers.find((a) => a.levelId === level.id);
+  if (officialAnswer) {
+    const metrics = calculateRouteMetrics(officialAnswer.route, level);
+    if (metrics.isValid && metrics.distance > 0) {
+      return {
+        route: officialAnswer.route,
+        distance: metrics.distance,
+        time: metrics.time,
+      };
+    }
+  }
+
   const targetHouses = level.houses
     .filter((h) => h.id !== 'Toko' && !h.isWaypoint)
     .map((h) => h.id);

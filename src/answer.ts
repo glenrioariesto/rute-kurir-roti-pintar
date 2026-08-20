@@ -20,20 +20,29 @@ export const optimalAnswers: OptimalAnswer[] = [
       '9', '8', 'E', '5', '6', 'D', '4', '3', 'C', '2',
       'A', 'Toko'
     ],
-    distance: 79,
-    timeFormatted: '39 menit 30 detik' // 79 * 0.5 = 39.5 menit
+    distance: 1660,
+    timeFormatted: '13 jam 50 menit'
   },
   {
     levelId: 2,
-    title: 'Level 2: Analisis Rute (9 Rumah, 14 Titik)',
+    title: 'Level 2: Analisis Rute (8 Rumah, 14 Titik)',
     route: [
       'Toko', '1', '2', 'B', '4', 'A', '5', 'C', '6', '3',
       'F', '11', '9', 'H', '6', '7', '8', 'G', '9', '10',
       'D', '12', '13', 'E', '1', 'Toko'
     ],
-    distance: 610,
-    timeFormatted: '5 jam 5 menit' // 610 * 0.5 = 305 menit = 5 jam 5 menit
+    distance: 2330,
+    timeFormatted: '19 jam 25 menit'
   },
-
-
+  {
+    levelId: 3,
+    title: 'Level 3: Labirin Kota (8 Rumah, 14 Titik)',
+    route: [
+      'Toko', '1', '2', 'B', '4', 'A', '5', 'C', '6', '3',
+      'F', '11', '9', 'H', '6', '7', '8', 'G', '9', '10',
+      'D', '12', '13', 'E', '1', 'Toko'
+    ],
+    distance: 2330,
+    timeFormatted: '19 jam 25 menit'
+  },
 ];

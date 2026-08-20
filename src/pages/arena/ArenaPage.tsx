@@ -119,6 +119,7 @@ export function ArenaPage({
         hasNextLevel={selectedLevelId < levels.length}
         playWin={playWin}
         stopWin={stopWin}
+        levelId={selectedLevelId}
       />
 
       <TutorialModal

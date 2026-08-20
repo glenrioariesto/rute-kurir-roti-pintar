@@ -289,7 +289,7 @@ export function useRouteGame(level: LevelConfig) {
 
     let finalFeedback = '';
     if (finalScore === 100) {
-      finalFeedback = 'Hebat! Kamu menemukan rute terpendek yang sempurna! ⭐';
+      finalFeedback = 'Hebat! Kamu menemukan rute terpendek yang sempurna!';
     } else if (finalScore >= 85) {
       finalFeedback = `Sangat baik! Rutenya sudah sangat efisien (Skor: ${finalScore}). Sedikit lagi menuju sempurna!`;
     } else if (finalScore >= 70) {

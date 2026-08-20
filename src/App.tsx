@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { SplashPage } from '@pages/splash/SplashPage';
 import { DashboardPage } from '@pages/dashboard/DashboardPage';
 import { ArenaPage } from '@pages/arena/ArenaPage';
@@ -11,6 +11,17 @@ export default function App() {
   const [page, setPage] = useState<Page>('splash');
   const [selectedLevelId, setSelectedLevelId] = useState(1);
   const [showFullscreenPrompt, setShowFullscreenPrompt] = useState(false);
+
+  // Disable right-click / context menu globally across all game components
+  useEffect(() => {
+    const handleContextMenu = (e: MouseEvent) => {
+      e.preventDefault();
+    };
+    window.addEventListener('contextmenu', handleContextMenu);
+    return () => {
+      window.removeEventListener('contextmenu', handleContextMenu);
+    };
+  }, []);
 
   const {
     isSoundOn,
