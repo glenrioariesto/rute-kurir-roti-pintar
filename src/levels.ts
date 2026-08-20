@@ -111,7 +111,7 @@ export const levels: LevelConfig[] = [
     viewBox: '0 0 800 820',
     linear: true,
     hideConnectionLines: true,
-    mapImage: 'map-level-2.webp',
+    mapImage: 'map-level-2.webp?v=2',
     initialMotorImage: 'motor-kiri-bawah.webp',
     description: 'Wilayah pengantaran meluas menjadi 8 rumah warga dan 1 Toko Roti dengan total 14 titik rute. Temukan rute terpendek dari Toko Roti, kunjungi semua rumah, dan kembali ke Toko Roti!',
     hints: 'Gunakan titik-titik persimpangan (tanpa rumah) untuk memotong rute dan meminimalkan jarak tempuh.',
@@ -183,8 +183,7 @@ export const levels: LevelConfig[] = [
     viewBox: '0 0 800 820',
     linear: true,
     hideConnectionLines: true,
-    // Note: Change to 'map-level-3.webp' when the asset is ready.
-    mapImage: 'map-level-2.webp',
+    mapImage: 'map-level-3.webp?v=2',
     initialMotorImage: 'motor-kiri-bawah.webp',
     description: 'Tantangan perkotaan paling rumit dengan gang-gang sempit dan persimpangan padat. Antar roti ke 8 rumah warga dari Toko Roti dan kembali dengan rute paling efisien!',
     hints: 'Gunakan persimpangan (Titik 1-13) dengan cerdik untuk mempersingkat waktu. Rencanakan seluruh rute sebelum melangkah.',
