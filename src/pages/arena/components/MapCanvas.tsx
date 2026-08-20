@@ -480,7 +480,7 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
             style={{
               shapeRendering: 'geometricPrecision',
               textRendering: 'geometricPrecision',
-              imageRendering: 'high-quality',
+              imageRendering: '-webkit-optimize-contrast',
             }}
           >
             <defs>
@@ -523,7 +523,7 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
                 width="100%" height="100%"
                 preserveAspectRatio="xMidYMid meet"
                 style={{
-                  imageRendering: 'high-quality',
+                  imageRendering: '-webkit-optimize-contrast',
                 }}
               />
             )}
@@ -580,7 +580,7 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
             {level.houses.filter(h => h.isWaypoint).map((house) => {
               const isInRoute = selectedRoute.includes(house.id);
               const isLatest = selectedRoute[selectedRoute.length - 1] === house.id && !isDelivering;
-              const wpNumber = house.id.replace('wp-', '');
+              const wpNumber = house.id.replace(/^(wp-|[Ww])/, '');
 
               // Priority: per-waypoint → level default → hardcoded
               const hw = house.waypointColors;
@@ -677,7 +677,7 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
                     x={-mHalf} y={-mHalf}
                     width={mSize} height={mSize}
                     preserveAspectRatio="xMidYMid meet"
-                    style={{ pointerEvents: 'none', imageRendering: 'high-quality' }}
+                    style={{ pointerEvents: 'none', imageRendering: '-webkit-optimize-contrast' }}
                   />
                 </g>
               );
@@ -722,7 +722,7 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
                         />
                       </g>
                     )}
-                    <image href={markerSrc} x={-mHalf + ox} y={-mHalf + oy} width={mSize} height={mSize} preserveAspectRatio="xMidYMid meet" style={{ pointerEvents: 'auto', opacity: 1.0, filter: 'none', transition: 'all 0.3s ease', imageRendering: 'high-quality' }} />
+                    <image href={markerSrc} x={-mHalf + ox} y={-mHalf + oy} width={mSize} height={mSize} preserveAspectRatio="xMidYMid meet" style={{ pointerEvents: 'auto', opacity: 1.0, filter: 'none', transition: 'all 0.3s ease', imageRendering: '-webkit-optimize-contrast' }} />
                     {isInRoute && !isToko && (() => {
                       const visitCount = selectedRoute.filter(id => id === house.id).length;
                       return (
