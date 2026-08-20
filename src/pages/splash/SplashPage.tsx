@@ -70,13 +70,13 @@ export function SplashPage({ onStart, isSoundOn, onToggleSound, onPlayClick }: S
         </div>
 
         {/* Start Button */}
-        <div id="splash-btn-container" className="w-full animate-float-btn">
+        <div id="splash-btn-container" className="w-full flex items-center justify-center animate-float-btn">
           <button
             id="splash-start-btn"
             onClick={onStart}
-            className="w-full py-3 px-5 lg:py-4 lg:px-8 2xl:py-5 2xl:px-10 rounded-xl sm:rounded-2xl 2xl:rounded-3xl text-white font-black text-sm lg:text-lg 2xl:text-2xl flex items-center justify-center gap-2 2xl:gap-3 bg-[#037DC2] hover:bg-[#074C83] border-b-3 2xl:border-b-4 border-[#074C83] active:border-b-0 active:translate-y-[3px] transition-all font-display tracking-wider cursor-pointer shadow-md hover:shadow-lg hover:shadow-amber-900/10 group"
+            className="w-fit py-2.5 px-6 sm:py-3.5 sm:px-10 lg:py-4 lg:px-12 2xl:py-5 2xl:px-16 rounded-xl sm:rounded-2xl 2xl:rounded-3xl text-white font-black text-xs sm:text-base lg:text-xl 2xl:text-2xl flex items-center justify-center gap-2 sm:gap-2.5 2xl:gap-3.5 bg-[#037DC2] hover:bg-[#074C83] border-b-3 2xl:border-b-4 border-[#074C83] active:border-b-0 active:translate-y-[3px] transition-all font-display tracking-wider cursor-pointer shadow-md hover:shadow-lg active:scale-95 group"
           >
-            <Play className="w-3.5 h-3.5 sm:w-4 sm:h-4 2xl:w-6 2xl:h-6 fill-white text-white group-hover:scale-110 transition-transform" />
+            <Play className="w-3.5 h-3.5 sm:w-4 sm:h-4 lg:w-5 lg:h-5 2xl:w-6 2xl:h-6 fill-white text-white group-hover:scale-110 transition-transform" />
             Mulai Game
           </button>
         </div>
