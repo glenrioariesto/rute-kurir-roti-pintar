@@ -54,6 +54,14 @@
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-6px); }
 }
+@keyframes float-title {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-7px); }
+}
+@keyframes float-btn {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
 
 @utility animate-fade-in-up {
   animation: fade-in-up 0.7s ease-out both;
@@ -66,4 +74,10 @@
 }
 @utility animate-float {
   animation: float 3s ease-in-out infinite;
+}
+@utility animate-float-title {
+  animation: float-title 3.5s ease-in-out infinite;
+}
+@utility animate-float-btn {
+  animation: float-btn 3.5s ease-in-out 0.8s infinite;
 }

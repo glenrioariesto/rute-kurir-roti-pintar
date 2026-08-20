@@ -3,6 +3,7 @@ import { ChevronRight, Play, Volume2, VolumeX } from 'lucide-react';
 const BASE_URL = import.meta.env?.BASE_URL || '/';
 const logoPusbuk = `${BASE_URL}logo-pusbuk.webp`;
 const splashBg = `${BASE_URL}bg-splash.webp?v=2`;
+const titleImg = `${BASE_URL}judul-pengantar-roti.webp`;
 
 interface SplashPageProps {
   onStart: () => void;
@@ -56,24 +57,29 @@ export function SplashPage({ onStart, isSoundOn, onToggleSound, onPlayClick }: S
       </div>
 
       {/* Card (Worksheet modal-like card with thick green border) */}
-      <div id="splash-card" className="z-10 relative max-w-[290px] lg:max-w-[580px] 2xl:max-w-[820px] w-full bg-white border-[3px] md:border-[5px] 2xl:border-[7px] border-[#0f5a31] rounded-[24px] 2xl:rounded-[36px] shadow-2xl overflow-hidden flex flex-col p-4 lg:p-10 2xl:p-12 gap-4 lg:gap-8 2xl:gap-10 animate-fade-in-up hover:shadow-green-900/10 transition-all duration-500">
+      <div id="splash-card" className="z-10 relative max-w-[290px] lg:max-w-[580px] 2xl:max-w-[920px] w-full overflow-hidden flex flex-col p-4 lg:p-10 2xl:p-12 gap-4 lg:gap-8 2xl:gap-10 animate-fade-in-up  transition-all duration-500">
         {/* Title Section */}
-        <h1 id="splash-title" className="text-lg lg:text-[40px] 2xl:text-[48px] font-display text-slate-800 uppercase leading-tight select-none font-black px-2 2xl:px-4">
-          Rute Pintar <br />
-          <span className="bg-gradient-to-r from-[#0f5a31] to-[#1e8d4f] bg-clip-text text-transparent 2xl:whitespace-nowrap 2xl:inline-block">
-            Sang pengantar roti
-          </span>
-        </h1>
+        <div id="splash-title-container" className="w-full flex items-center justify-center px-1 animate-float-title">
+          <img 
+            id="splash-title-img"
+            src={titleImg} 
+            alt="Rute Pintar Sang Pengantar Roti" 
+            className="w-full h-auto object-contain drop-shadow-md select-none"
+            draggable={false}
+          />
+        </div>
 
         {/* Start Button */}
-        <button
-          id="splash-start-btn"
-          onClick={onStart}
-          className="w-full py-3 px-5 lg:py-4 lg:px-8 2xl:py-5 2xl:px-10 rounded-xl sm:rounded-2xl 2xl:rounded-3xl text-white font-black text-sm lg:text-lg 2xl:text-2xl flex items-center justify-center gap-2 2xl:gap-3 bg-[#037DC2] hover:bg-[#074C83] border-b-3 2xl:border-b-4 border-[#074C83] active:border-b-0 active:translate-y-[3px] transition-all font-display tracking-wider cursor-pointer shadow-md hover:shadow-lg hover:shadow-amber-900/10 group"
-        >
-          <Play className="w-3.5 h-3.5 sm:w-4 sm:h-4 2xl:w-6 2xl:h-6 fill-white text-white group-hover:scale-110 transition-transform" />
-          Mulai Game
-        </button>
+        <div id="splash-btn-container" className="w-full animate-float-btn">
+          <button
+            id="splash-start-btn"
+            onClick={onStart}
+            className="w-full py-3 px-5 lg:py-4 lg:px-8 2xl:py-5 2xl:px-10 rounded-xl sm:rounded-2xl 2xl:rounded-3xl text-white font-black text-sm lg:text-lg 2xl:text-2xl flex items-center justify-center gap-2 2xl:gap-3 bg-[#037DC2] hover:bg-[#074C83] border-b-3 2xl:border-b-4 border-[#074C83] active:border-b-0 active:translate-y-[3px] transition-all font-display tracking-wider cursor-pointer shadow-md hover:shadow-lg hover:shadow-amber-900/10 group"
+          >
+            <Play className="w-3.5 h-3.5 sm:w-4 sm:h-4 2xl:w-6 2xl:h-6 fill-white text-white group-hover:scale-110 transition-transform" />
+            Mulai Game
+          </button>
+        </div>
       </div>
     </div>
   );
