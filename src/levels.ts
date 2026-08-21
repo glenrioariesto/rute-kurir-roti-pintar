@@ -182,7 +182,7 @@ export const levels: LevelConfig[] = [
     title: 'Level 3: Labirin Kota 10 Rumah + 1 Toko Roti',
     viewBox: '0 0 800 820',
     linear: true,
-    hideConnectionLines: false,
+    hideConnectionLines: true,
     mapImage: 'map-level-3.webp?v=3',
     initialMotorImage: 'motor-kiri-bawah.webp',
     description: 'Tantangan perkotaan paling kompleks dengan 10 rumah warga dan 1 Toko Roti dengan total 25 titik rute. Temukan rute terpendek dari Toko Roti, kunjungi semua rumah, dan kembali ke Toko Roti!',
