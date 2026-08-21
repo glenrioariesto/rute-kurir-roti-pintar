@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { levels } from '@/levels';
 import { useRouteGame } from '@hooks/useRouteGame';
 import { MapCanvas } from '@pages/arena/components/MapCanvas';
@@ -22,6 +22,7 @@ interface ArenaPageProps {
   stopMotor: () => void;
   playWin: () => void;
   stopWin: () => void;
+  onLevelComplete?: (completedLevelId: number) => void;
 }
 
 export function ArenaPage({
@@ -39,6 +40,7 @@ export function ArenaPage({
   stopMotor,
   playWin,
   stopWin,
+  onLevelComplete,
 }: ArenaPageProps) {
   const [selectedLevelId, setSelectedLevelId] = useState(initialLevelId);
   const [showTutorial, setShowTutorial] = useState(false);
@@ -54,8 +56,15 @@ export function ArenaPage({
     getCourierPosition, attempts, animationStep, deliverySpeed, setDeliverySpeed,
   } = useRouteGame(currentLevel);
 
+  useEffect(() => {
+    if (showResult && (score >= 50 || currentMetrics.isValid)) {
+      onLevelComplete?.(selectedLevelId);
+    }
+  }, [showResult, score, currentMetrics.isValid, selectedLevelId, onLevelComplete]);
+
   const handleNextLevel = () => {
     if (selectedLevelId < levels.length) {
+      onLevelComplete?.(selectedLevelId);
       setSelectedLevelId(selectedLevelId + 1);
       setShowIntro(true);
     }

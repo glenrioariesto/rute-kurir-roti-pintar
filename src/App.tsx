@@ -11,6 +11,26 @@ export default function App() {
   const [page, setPage] = useState<Page>('splash');
   const [selectedLevelId, setSelectedLevelId] = useState(1);
   const [showFullscreenPrompt, setShowFullscreenPrompt] = useState(false);
+  const [unlockedLevel, setUnlockedLevel] = useState<number>(() => {
+    try {
+      const saved = localStorage.getItem('kurir_roti_unlocked_level');
+      return saved ? Math.max(1, parseInt(saved, 10)) : 1;
+    } catch {
+      return 1;
+    }
+  });
+
+  const handleLevelComplete = (completedLevelId: number) => {
+    setUnlockedLevel((prev) => {
+      const next = Math.max(prev, completedLevelId + 1);
+      try {
+        localStorage.setItem('kurir_roti_unlocked_level', String(next));
+      } catch (e) {
+        console.warn('Failed to save progression to localStorage', e);
+      }
+      return next;
+    });
+  };
 
   // Disable right-click / context menu globally across all game components
   useEffect(() => {
@@ -129,6 +149,7 @@ export default function App() {
           isSoundOn={isSoundOn} 
           onToggleSound={toggleSound} 
           onPlayClick={playClick}
+          unlockedLevel={unlockedLevel}
         />
       )}
       {page === 'arena' && (
@@ -150,6 +171,7 @@ export default function App() {
           stopMotor={stopMotor}
           playWin={playWin}
           stopWin={stopWin}
+          onLevelComplete={handleLevelComplete}
         />
       )}
       <PortraitWarning />
