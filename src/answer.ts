@@ -36,13 +36,14 @@ export const optimalAnswers: OptimalAnswer[] = [
   },
   {
     levelId: 3,
-    title: 'Level 3: Labirin Kota (8 Rumah, 14 Titik)',
+    title: 'Level 3: Labirin Kota (10 Rumah, 14 Titik)',
     route: [
-      'Toko', '1', '2', 'B', '4', 'A', '5', 'C', '6', '3',
-      'F', '11', '9', 'H', '6', '7', '8', 'G', '9', '10',
-      'D', '12', '13', 'E', '1', 'Toko'
+      'Toko', 'I', '4', 'J', '3', 'B', '2', '1', 'C', '9',
+      'H', '10', '11', 'E', '8', '9', 'H', '10', '11', '14',
+      'G', '13', '12', 'F', '7', 'D', '6', '5', 'A', '4',
+      'I', 'Toko'
     ],
-    distance: 2330,
-    timeFormatted: '19 jam 25 menit'
+    distance: 2700,
+    timeFormatted: '22 jam 30 menit'
   },
 ];
