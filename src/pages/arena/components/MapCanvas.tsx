@@ -304,10 +304,10 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
         <button
           id="arena-back-btn"
           onClick={onBack}
-          className="bg-white/60 backdrop-blur-md border border-slate-200/80 rounded-lg p-1.5 shadow-sm hover:bg-white/85 active:scale-95 transition text-slate-600 cursor-pointer animate-fade-in"
+          className="bg-white/60 backdrop-blur-md border border-slate-200/80 rounded-lg p-2 md:p-2.5 shadow-sm hover:bg-white/85 active:scale-95 transition text-slate-600 cursor-pointer animate-fade-in flex items-center justify-center"
           title="Kembali"
         >
-          <ChevronLeft className="w-4 h-4" />
+          <ChevronLeft className="w-5 h-5 md:w-5.5 md:h-5.5" />
         </button>
 
         {/* Sound Toggle */}
@@ -317,13 +317,13 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
             onPlayClick?.();
             onToggleSound();
           }}
-          className="bg-white/60 backdrop-blur-md border border-slate-200/80 rounded-lg p-1.5 shadow-sm hover:bg-white/85 active:scale-95 transition text-slate-600 cursor-pointer animate-fade-in"
+          className="bg-white/60 backdrop-blur-md border border-slate-200/80 rounded-lg p-2 md:p-2.5 shadow-sm hover:bg-white/85 active:scale-95 transition text-slate-600 cursor-pointer animate-fade-in flex items-center justify-center"
           title={isSoundOn ? 'Matikan Suara' : 'Nyalakan Suara'}
         >
           {isSoundOn ? (
-            <Volume2 className="w-4 h-4 text-emerald-600" />
+            <Volume2 className="w-5 h-5 md:w-5.5 md:h-5.5 text-emerald-600" />
           ) : (
-            <VolumeX className="w-4 h-4 text-slate-400" />
+            <VolumeX className="w-5 h-5 md:w-5.5 md:h-5.5 text-slate-400" />
           )}
         </button>
 
@@ -334,10 +334,10 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
             onPlayClick?.();
             onHelpClick?.();
           }}
-          className="bg-white/60 backdrop-blur-md border border-slate-200/80 rounded-lg p-1.5 shadow-sm hover:bg-white/85 active:scale-95 transition text-amber-600 cursor-pointer animate-fade-in"
+          className="bg-white/60 backdrop-blur-md border border-slate-200/80 rounded-lg p-2 md:p-2.5 shadow-sm hover:bg-white/85 active:scale-95 transition text-amber-600 cursor-pointer animate-fade-in flex items-center justify-center"
           title="Cara Bermain"
         >
-          <HelpCircle className="w-4 h-4" />
+          <HelpCircle className="w-5 h-5 md:w-5.5 md:h-5.5" />
         </button>
       </div>
 
@@ -347,7 +347,7 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
           id="arena-level-toast-img"
           src={`${BASE}level-${level.id}-toast.webp`}
           alt={`Level ${level.id}`}
-          className="h-8 lg:h-20 w-auto object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.25)]"
+          className="h-12 sm:h-14 md:h-16 lg:h-20 2xl:h-24 w-auto object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.25)]"
           draggable={false}
         />
       </div>
@@ -361,7 +361,7 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
             onPlayClick?.();
             setShowRouteTimeline(prev => !prev);
           }}
-          className={`bg-white/60 backdrop-blur-md border rounded-lg px-2.5 py-1 text-[8.5px] md:text-[11px] font-semibold shadow-sm hover:bg-white/85 active:scale-95 transition flex items-center gap-1 font-display tracking-wider ${
+          className={`bg-white/60 backdrop-blur-md border rounded-lg px-3 py-2 sm:px-3.5 md:py-2.5 text-[10px] sm:text-[11px] md:text-xs font-semibold shadow-sm hover:bg-white/85 active:scale-95 transition flex items-center gap-1 font-display tracking-wider whitespace-nowrap ${
             showRouteTimeline
               ? 'border-indigo-500 text-indigo-700 bg-indigo-50/45'
               : 'border-slate-200/80 text-slate-600'
@@ -377,7 +377,7 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
             onPlayClick?.();
             resetView();
           }}
-          className="bg-white/60 backdrop-blur-md border border-slate-200/80 rounded-lg px-2.5 py-1 text-[8.5px] md:text-[11px] font-semibold text-slate-600 shadow-sm hover:bg-white/85 active:scale-95 transition font-display tracking-wider"
+          className="bg-white/60 backdrop-blur-md border border-slate-200/80 rounded-lg px-3 py-2 sm:px-3.5 md:py-2.5 text-[10px] sm:text-[11px] md:text-xs font-semibold text-slate-600 shadow-sm hover:bg-white/85 active:scale-95 transition font-display tracking-wider whitespace-nowrap"
         >
           ⟳ Tampilan Awal
         </button>
@@ -752,7 +752,7 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
           id="arena-soal-img"
           src={`${BASE}soal-${level.id}.webp`}
           alt={`Soal Level ${level.id}`}
-          className="h-12 md:h-auto sm:max-w-[180px] lg:max-w-[220px] 2xl:max-w-[450px] w-auto object-contain drop-shadow-[0_2px_10px_rgba(0,0,0,0.2)] rounded-lg"
+          className="h-16 md:h-auto sm:max-w-[180px] lg:max-w-[220px] 2xl:max-w-[450px] w-auto object-contain drop-shadow-[0_2px_10px_rgba(0,0,0,0.2)] rounded-lg"
           draggable={false}
         />
       </div>

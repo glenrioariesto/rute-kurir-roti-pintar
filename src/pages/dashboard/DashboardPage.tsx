@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { ChevronRight, Volume2, VolumeX, Lock, AlertCircle } from 'lucide-react';
 import { levels } from '@/levels';
+import { ObjectivesModal } from '@/pages/dashboard/ObjectivesModal';
 
 const BASE_URL = import.meta.env?.BASE_URL || '/';
-const logoPusbuk = `${BASE_URL}logo-pusbuk.webp`;
+const logoPusbuk = `${BASE_URL}logo-jenama.webp?v2`;
 const dashboardBg = `${BASE_URL}bg-splash.webp?v=2`;
 
 interface DashboardPageProps {
@@ -62,8 +63,18 @@ const titleColorClass = (id: number) => {
   return 'text-[#be123c]/50 group-hover:text-[#be123c]';
 };
 
+// Tampilkan modal tujuan pembelajaran hanya sekali per sesi (saat masuk dashboard dari splash)
+let objectivesShownThisSession = false;
+
 export function DashboardPage({ onSelectLevel, isSoundOn, onToggleSound, onPlayClick, unlockedLevel = 1 }: DashboardPageProps) {
   const [lockToast, setLockToast] = useState<string | null>(null);
+  const [showObjectives, setShowObjectives] = useState<boolean>(() => {
+    if (!objectivesShownThisSession) {
+      objectivesShownThisSession = true;
+      return true;
+    }
+    return false;
+  });
 
   const handleCardClick = (levelId: number) => {
     if (levelId > unlockedLevel) {
@@ -119,7 +130,7 @@ export function DashboardPage({ onSelectLevel, isSoundOn, onToggleSound, onPlayC
       {/* Header - Separate from dashboard-card on both mobile and desktop */}
       <header 
         id="dashboard-header" 
-        className="z-10 w-fit mx-auto flex flex-col items-center text-center shrink-0 bg-[#0090D4] backdrop-blur-md border-[2.5px] sm:border-[3px] md:border-[4px] 2xl:border-[6px] border-white rounded-lg sm:rounded-2xl 2xl:rounded-3xl shadow-lg pt-1.5 pb-0.75 px-3.5 sm:pt-2.5 sm:pb-1.25 sm:px-6 md:pt-3 md:pb-1.5 md:px-8 2xl:pt-4 2xl:pb-2 2xl:px-12 mb-1.5 sm:mb-3 md:mb-4 lg:mb-5 2xl:mb-7 animate-fade-in-up"
+        className={`z-10 w-fit mx-auto flex flex-col items-center text-center shrink-0 bg-[#0090D4] backdrop-blur-md border-[2.5px] sm:border-[3px] md:border-[4px] 2xl:border-[6px] border-white rounded-lg sm:rounded-2xl 2xl:rounded-3xl shadow-lg pt-1.5 pb-0.75 px-3.5 sm:pt-2.5 sm:pb-1.25 sm:px-6 md:pt-3 md:pb-1.5 md:px-8 2xl:pt-4 2xl:pb-2 2xl:px-12 mb-1.5 sm:mb-3 md:mb-4 lg:mb-5 2xl:mb-7 animate-fade-in-up ${showObjectives ? 'invisible pointer-events-none' : ''}`}
       >
         <h1 
           id="dashboard-title" 
@@ -132,7 +143,7 @@ export function DashboardPage({ onSelectLevel, isSoundOn, onToggleSound, onPlayC
       {/* Level Cards Wrapper Card - Active on desktop (lg:), transparent/borderless on mobile */}
       <div 
         id="dashboard-card" 
-        className="z-10 w-full max-w-5xl 2xl:max-w-6xl bg-transparent lg:bg-white/50 lg:backdrop-blur-md border-0 lg:border-[3px] md:border-[5px] 2xl:border-[7px] border-transparent lg:border-white rounded-none lg:rounded-2xl md:rounded-[24px] 2xl:rounded-[36px] shadow-none lg:shadow-2xl flex flex-col p-0 lg:p-8 2xl:p-12 justify-center min-h-0 animate-fade-in-up transition-all duration-500"
+        className={`z-10 w-full max-w-5xl 2xl:max-w-6xl bg-transparent lg:bg-white/50 lg:backdrop-blur-md border-0 lg:border-[3px] md:border-[5px] 2xl:border-[7px] border-transparent lg:border-white rounded-none lg:rounded-2xl md:rounded-[24px] 2xl:rounded-[36px] shadow-none lg:shadow-2xl flex flex-col p-0 lg:p-8 2xl:p-12 justify-center min-h-0 animate-fade-in-up transition-all duration-500 ${showObjectives ? 'invisible pointer-events-none' : ''}`}
       >
         {/* Level Cards */}
         <main id="dashboard-main" className="w-full min-h-0">
@@ -217,6 +228,20 @@ export function DashboardPage({ onSelectLevel, isSoundOn, onToggleSound, onPlayC
           </div>
         </main>
       </div>
+
+      {/* Level Objectives Modal - tampil sekali saat masuk dashboard */}
+      <ObjectivesModal
+        isOpen={showObjectives}
+        onClose={() => {
+          onPlayClick();
+          setShowObjectives(false);
+        }}
+        onStart={() => {
+          onPlayClick();
+          setShowObjectives(false);
+        }}
+        onPlayClick={onPlayClick}
+      />
 
       {/* Locked Toast Notification matching Pilih Level header card style */}
       {lockToast && (
