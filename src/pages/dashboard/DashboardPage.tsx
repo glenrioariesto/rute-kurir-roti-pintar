@@ -4,7 +4,7 @@ import { levels } from '@/levels';
 import { ObjectivesModal } from '@/pages/dashboard/ObjectivesModal';
 
 const BASE_URL = import.meta.env?.BASE_URL || '/';
-const logoPusbuk = `${BASE_URL}logo-jenama.webp?v2`;
+const logoPusbuk = `${BASE_URL}img/logo-jenama.webp?v2`;
 const dashboardBg = `${BASE_URL}bg-splash.webp?v=2`;
 
 interface DashboardPageProps {

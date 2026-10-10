@@ -1,7 +1,7 @@
 import { ChevronRight, Play, Volume2, VolumeX } from 'lucide-react';
 
 const BASE_URL = import.meta.env?.BASE_URL || '/';
-const logoPusbuk = `${BASE_URL}logo-jenama.webp?v2`;
+const logoPusbuk = `${BASE_URL}img/logo-jenama.webp?v2`;
 const splashBg = `${BASE_URL}bg-splash.webp?v=2`;
 const titleImg = `${BASE_URL}judul-pengantar-roti.webp`;
 
