@@ -30,13 +30,13 @@ export function SplashPage({ onStart, isSoundOn, onToggleSound, onPlayClick }: S
       {/* Soft bright gradient overlay */}
       <div id="splash-gradient-overlay" className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-black/10 z-0 animate-fade-in" />
 
-      {/* Logo Pusbuk - Floating in Top Corner */}
-      <div id="splash-logo-container" className="absolute top-4 left-4 sm:top-6 sm:left-6 2xl:top-10 2xl:left-10 z-30">
+      {/* Logo Pusbuk - Floating in Top Corner (matching detektif digital) */}
+      <div id="splash-logo-container" className="absolute top-3 left-3 sm:top-5 sm:left-5 z-40 shrink-0">
         <img 
           id="splash-logo"
           src={logoPusbuk} 
           alt="Logo Pusbuk" 
-          className="h-7 sm:h-10 md:h-14 lg:h-16 2xl:h-28 w-auto object-contain drop-shadow-md transition-transform duration-300 hover:scale-105"
+          className="h-10 sm:h-14 md:h-16 lg:h-20 xl:h-24 2xl:h-28 w-auto object-contain drop-shadow-[0_8px_16px_rgba(56,69,91,0.55)] transition-transform duration-300 hover:scale-105"
         />
       </div>
 
