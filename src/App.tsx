@@ -177,7 +177,7 @@ export default function App() {
       <PortraitWarning />
       {/* Footer Copyright: Hanya tampil di halaman tanpa kontrol (Splash & Dashboard) */}
       {page !== 'arena' && (
-        <footer className="fixed bottom-1.5 left-0 right-0 z-40 text-center pointer-events-none select-none text-[10px] text-slate-700/90 font-medium tracking-wide">
+        <footer className="fixed bottom-1.5 left-0 right-0 z-40 text-center pointer-events-none select-none text-[10px] sm:text-xs text-white font-display tracking-wider drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">
           Copyright 2026 Pusat Perbukuan
         </footer>
       )}
