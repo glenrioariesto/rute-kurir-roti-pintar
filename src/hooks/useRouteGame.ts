@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { LevelConfig } from '@/types';
 import { calculateRouteMetrics, findOptimalRoute, visitsAllHouses } from '@utils/findOptimalRoute';
+import { DeliveryInfo } from '@pages/arena/components/DeliveryModal';
 
 export function useRouteGame(level: LevelConfig) {
   const [selectedRoute, setSelectedRoute] = useState<string[]>(['Toko']);
@@ -13,18 +14,18 @@ export function useRouteGame(level: LevelConfig) {
   const [score, setScore] = useState(0);
   const [feedback, setFeedback] = useState('');
   const [errorToast, setErrorToast] = useState<string | null>(null);
+  const [currentDelivery, setCurrentDelivery] = useState<DeliveryInfo | null>(null);
   const [attempts, setAttempts] = useState<{
     route: string[]; distance: number; time: number; score: number; isValid: boolean;
   }[]>([]);
 
-
-
   // Refs untuk animasi — hindari stale closure
-  const stepRef      = useRef(0);
-  const progressRef  = useRef(0);
-  const routeRef     = useRef<string[]>(['Toko']);
-  const deliveringRef = useRef(false);
-  const pausedRef    = useRef(false);
+  const stepRef            = useRef(0);
+  const progressRef        = useRef(0);
+  const routeRef           = useRef<string[]>(['Toko']);
+  const deliveringRef      = useRef(false);
+  const pausedRef          = useRef(false);
+  const deliveredHousesRef = useRef<Set<string>>(new Set());
 
   useEffect(() => {
     setSelectedRoute(['Toko']);
@@ -32,10 +33,13 @@ export function useRouteGame(level: LevelConfig) {
     setSegmentLengths([]);
     setIsDelivering(false);
     deliveringRef.current = false;
+    setCurrentDelivery(null);
+    pausedRef.current = false;
+    deliveredHousesRef.current.clear();
     setShowResult(false);
     setScore(0);
     setFeedback('');
-  }, [level]);
+  }, [level.id, level]);
 
   const currentMetrics = calculateRouteMetrics(selectedRoute, level);
   const optimal = findOptimalRoute(level);
@@ -139,8 +143,6 @@ export function useRouteGame(level: LevelConfig) {
     const minDistance = Math.min(...pathsWithDist.map(pwd => pwd.distance));
 
     // Filter rute yang jaraknya sama dengan jarak terpendek
-    // agar otomatis memilih rute terpendek tanpa menanyakan pengguna.
-    // Jika ada beberapa rute terpendek yang sama, pilih salah satu secara otomatis.
     const validPaths = pathsWithDist.filter(pwd => pwd.distance === minDistance);
 
     let path = validPaths[0].path;
@@ -172,93 +174,15 @@ export function useRouteGame(level: LevelConfig) {
     setSelectedRoute(['Toko']);
     routeRef.current = ['Toko'];
     setSegmentLengths([]);
+    setCurrentDelivery(null);
+    pausedRef.current = false;
+    deliveredHousesRef.current.clear();
     setShowResult(false);
     setScore(0);
     setFeedback('');
   };
 
-  const handleDeliver = () => {
-    if (selectedRoute.length < 2) {
-      setErrorToast('⚠️ Tentukan rutenya terlebih dahulu dengan mengeklik rumah!');
-      setTimeout(() => setErrorToast(null), 3000);
-      return;
-    }
-
-    if (selectedRoute[selectedRoute.length - 1] !== 'Toko') {
-      setErrorToast('🥖 Jangan lupa selesaikan rute dengan mengeklik "Toko Roti" kembali di akhir!');
-      setTimeout(() => setErrorToast(null), 3500);
-      return;
-    }
-
-    if (!visitsAllHouses(selectedRoute, level)) {
-      setErrorToast('🏠 Masih ada warga yang belum menerima kiriman roti. Kunjungi seluruh rumah!');
-      setTimeout(() => setErrorToast(null), 3500);
-      return;
-    }
-
-    stepRef.current = 0;
-    progressRef.current = 0;
-    pausedRef.current = false;
-    setAnimationStep(0);
-    setAnimationProgress(0);
-    setIsDelivering(true);
-    deliveringRef.current = true;
-    setShowResult(false);
-  };
-
-  const handleStopDeliver = () => {
-    setIsDelivering(false);
-    deliveringRef.current = false;
-    stepRef.current = 0;
-    progressRef.current = 0;
-    setAnimationStep(0);
-    setAnimationProgress(0);
-  };
-
-  // Animation loop — gunakan ref agar tidak stale
-  useEffect(() => {
-    if (!isDelivering) return;
-
-    const route = routeRef.current;
-    const totalLegs = route.length - 1;
-    if (totalLegs <= 0) { setIsDelivering(false); return; }
-
-    const timer = setInterval(() => {
-      if (pausedRef.current) return;
-
-      progressRef.current += 4 * deliverySpeed;
-
-      if (progressRef.current >= 100) {
-        progressRef.current = 100;
-        setAnimationProgress(100);
-
-        if (stepRef.current < totalLegs - 1) {
-          // Pause sebentar di titik ini sebelum lanjut
-          pausedRef.current = true;
-          setTimeout(() => {
-            stepRef.current += 1;
-            progressRef.current = 0;
-            setAnimationStep(stepRef.current);
-            setAnimationProgress(0);
-            pausedRef.current = false;
-          }, 600 / deliverySpeed);
-        } else {
-          clearInterval(timer);
-          setTimeout(() => {
-            deliveringRef.current = false;
-            setIsDelivering(false);
-            calculateFinalScore();
-          }, 800 / deliverySpeed);
-        }
-      } else {
-        setAnimationProgress(progressRef.current);
-      }
-    }, 50);
-
-    return () => clearInterval(timer);
-  }, [isDelivering, deliverySpeed]);
-
-  const calculateFinalScore = () => {
+  const calculateFinalScore = useCallback(() => {
     const route = routeRef.current;
     const routeVisitedAll = visitsAllHouses(route, level);
     const endsAtToko = route[route.length - 1] === 'Toko';
@@ -272,7 +196,7 @@ export function useRouteGame(level: LevelConfig) {
 
     if (!endsAtToko) {
       setScore(40);
-      setFeedback('Roti sudah sampai ke semua warga, tapi kurir lupa kembali ke Toko Roti!');
+      setFeedback('Roti sudah sampai ke semua warga, tapi kurir belum kembali ke Toko Roti! Ingat, di setiap stage kurir harus balik lagi ke Toko Roti.');
       setShowResult(true);
       return;
     }
@@ -280,8 +204,6 @@ export function useRouteGame(level: LevelConfig) {
     const metrics = calculateRouteMetrics(route, level);
     const distance = metrics.distance;
     const time = metrics.time;
-
-
 
     const ratio = optimal.distance / distance;
     let finalScore = Math.round(100 * ratio);
@@ -304,7 +226,129 @@ export function useRouteGame(level: LevelConfig) {
     setFeedback(finalFeedback);
     setShowResult(true);
     setAttempts((prev) => [{ route, distance, time, score: finalScore, isValid: true }, ...prev]);
+  }, [level, optimal.distance]);
+
+  const handleDeliver = () => {
+    if (selectedRoute.length < 2) {
+      setErrorToast('⚠️ Tentukan rutenya terlebih dahulu dengan mengeklik rumah!');
+      setTimeout(() => setErrorToast(null), 3000);
+      return;
+    }
+
+    if (selectedRoute[selectedRoute.length - 1] !== 'Toko') {
+      setErrorToast('🥖 Di setiap stage, kurir harus balik lagi ke Toko Roti setelah mengantar semua pesanan!');
+      setTimeout(() => setErrorToast(null), 3500);
+      return;
+    }
+
+    if (!visitsAllHouses(selectedRoute, level)) {
+      setErrorToast('🏠 Masih ada warga yang belum menerima kiriman roti. Kunjungi seluruh rumah!');
+      setTimeout(() => setErrorToast(null), 3500);
+      return;
+    }
+
+    stepRef.current = 0;
+    progressRef.current = 0;
+    pausedRef.current = false;
+    deliveredHousesRef.current.clear();
+    setCurrentDelivery(null);
+    setAnimationStep(0);
+    setAnimationProgress(0);
+    setIsDelivering(true);
+    deliveringRef.current = true;
+    setShowResult(false);
   };
+
+  const handleStopDeliver = () => {
+    setIsDelivering(false);
+    deliveringRef.current = false;
+    setCurrentDelivery(null);
+    pausedRef.current = false;
+    deliveredHousesRef.current.clear();
+    stepRef.current = 0;
+    progressRef.current = 0;
+    setAnimationStep(0);
+    setAnimationProgress(0);
+  };
+
+  // Called when DeliveryModal finishes (video ended, timer countdown, or user clicked skip)
+  const handleFinishDelivery = useCallback(() => {
+    setCurrentDelivery(null);
+    const totalLegs = routeRef.current.length - 1;
+
+    if (stepRef.current < totalLegs - 1) {
+      stepRef.current += 1;
+      progressRef.current = 0;
+      setAnimationStep(stepRef.current);
+      setAnimationProgress(0);
+      pausedRef.current = false;
+    } else {
+      deliveringRef.current = false;
+      setIsDelivering(false);
+      deliveredHousesRef.current.clear();
+      calculateFinalScore();
+    }
+  }, [calculateFinalScore]);
+
+  // Animation loop — gunakan ref agar tidak stale
+  useEffect(() => {
+    if (!isDelivering) return;
+
+    const route = routeRef.current;
+    const totalLegs = route.length - 1;
+    if (totalLegs <= 0) { setIsDelivering(false); return; }
+
+    const timer = setInterval(() => {
+      if (pausedRef.current) return;
+
+      progressRef.current += 4 * deliverySpeed;
+
+      if (progressRef.current >= 100) {
+        progressRef.current = 100;
+        setAnimationProgress(100);
+
+        const nextNodeId = route[stepRef.current + 1];
+        const nextHouse = level.houses.find(h => h.id === nextNodeId);
+        const isCustomerHouse = nextHouse && !nextHouse.isWaypoint && nextNodeId !== 'Toko';
+        const isAlreadyDelivered = deliveredHousesRef.current.has(nextNodeId);
+
+        if (isCustomerHouse && !isAlreadyDelivered) {
+          // Reached a customer house for the first time -> Mark delivered, pause motor & show package delivery modal
+          deliveredHousesRef.current.add(nextNodeId);
+          pausedRef.current = true;
+          setCurrentDelivery({
+            houseId: nextHouse.id,
+            houseName: nextHouse.name,
+            stepNumber: stepRef.current + 1,
+            videoUrl: nextHouse.deliveryVideo || level.deliveryVideo,
+          });
+        } else if (stepRef.current < totalLegs - 1) {
+          // Reached a waypoint / intersection OR a house that already received bread -> pass through with brief pause
+          pausedRef.current = true;
+          setTimeout(() => {
+            stepRef.current += 1;
+            progressRef.current = 0;
+            setAnimationStep(stepRef.current);
+            setAnimationProgress(0);
+            pausedRef.current = false;
+          }, 300 / deliverySpeed);
+        } else {
+          // Finished route back at Toko
+          clearInterval(timer);
+          setTimeout(() => {
+            deliveringRef.current = false;
+            setIsDelivering(false);
+            deliveredHousesRef.current.clear();
+            calculateFinalScore();
+          }, 800 / deliverySpeed);
+        }
+      } else {
+        setAnimationProgress(progressRef.current);
+      }
+    }, 50);
+
+    return () => clearInterval(timer);
+  }, [isDelivering, deliverySpeed, level, calculateFinalScore]);
 
   const getCourierPosition = () => {
     const route = routeRef.current;
@@ -340,6 +384,8 @@ export function useRouteGame(level: LevelConfig) {
     errorToast,
     optimal,
     currentMetrics,
+    currentDelivery,
+    handleFinishDelivery,
     handleHouseClick,
     handleUndo,
     handleReset,

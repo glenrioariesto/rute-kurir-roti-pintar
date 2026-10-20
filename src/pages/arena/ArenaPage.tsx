@@ -3,6 +3,7 @@ import { levels } from '@/levels';
 import { useRouteGame } from '@hooks/useRouteGame';
 import { MapCanvas } from '@pages/arena/components/MapCanvas';
 import { ResultModal } from '@pages/arena/components/ResultModal';
+import { DeliveryModal } from '@pages/arena/components/DeliveryModal';
 import { TutorialModal } from '@/components/shared/TutorialModal';
 import { AlertCircle } from 'lucide-react';
 import { LevelIntroOverlay } from '@pages/arena/components/LevelIntroOverlay';
@@ -52,9 +53,16 @@ export function ArenaPage({
   const {
     selectedRoute, segmentLengths, isDelivering, showResult, setShowResult,
     score, feedback, errorToast, optimal, currentMetrics,
+    currentDelivery, handleFinishDelivery,
     handleHouseClick, handleUndo, handleReset, handleDeliver, handleStopDeliver,
     getCourierPosition, attempts, animationStep, deliverySpeed, setDeliverySpeed,
   } = useRouteGame(currentLevel);
+
+  useEffect(() => {
+    if (currentDelivery) {
+      playDeliverSound();
+    }
+  }, [currentDelivery, playDeliverSound]);
 
   useEffect(() => {
     if (showResult && (score >= 50 || currentMetrics.isValid)) {
@@ -67,6 +75,7 @@ export function ArenaPage({
       onLevelComplete?.(selectedLevelId);
       setSelectedLevelId(selectedLevelId + 1);
       setShowIntro(true);
+      handleReset();
     }
   };
 
@@ -105,6 +114,7 @@ export function ArenaPage({
             playUndoSound={playUndoSound}
             playMotor={playMotor}
             stopMotor={stopMotor}
+            isPaused={!!currentDelivery}
           />
           {errorToast && (
             <div id="arena-error-toast" className="absolute bottom-24 left-3 right-3 bg-rose-600 text-white px-3 py-2.5 rounded-xl shadow-lg flex items-center gap-2 animate-bounce z-40 text-xs font-semibold md:left-4 md:right-auto md:max-w-md">
@@ -129,6 +139,12 @@ export function ArenaPage({
         playWin={playWin}
         stopWin={stopWin}
         levelId={selectedLevelId}
+      />
+
+      <DeliveryModal
+        delivery={currentDelivery}
+        onComplete={handleFinishDelivery}
+        speed={deliverySpeed}
       />
 
       <TutorialModal

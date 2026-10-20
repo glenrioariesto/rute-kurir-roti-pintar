@@ -1,5 +1,5 @@
 import React, { useRef, useState, useCallback, useEffect } from 'react';
-import { ChevronLeft, SkipBack, RotateCcw, Truck, ChevronDown, ChevronUp, HelpCircle, Volume2, VolumeX } from 'lucide-react';
+import { ChevronLeft, SkipBack, RotateCcw, Truck, ChevronDown, ChevronUp, HelpCircle, AlertCircle, Volume2, VolumeX } from 'lucide-react';
 import { Connection, LevelConfig } from '@/types';
 import { formatDistance } from '@utils/findOptimalRoute';
 
@@ -30,6 +30,7 @@ interface MapCanvasProps {
   playUndoSound: () => void;
   playMotor: () => void;
   stopMotor: () => void;
+  isPaused?: boolean;
 }
 
 const BASE = import.meta.env.BASE_URL;
@@ -53,7 +54,7 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
   onUndo, onReset, onDeliver, onStopDeliver, deliverySpeed, onChangeSpeed, currentMetrics, onHelpClick,
   isSoundOn, onToggleSound, onPlayClick,
   playHouseClick, playWaypointClick, playDeliverSound, playResetSound, playUndoSound,
-  playMotor, stopMotor,
+  playMotor, stopMotor, isPaused,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [tf, setTf] = useState<Transform>(INITIAL);
@@ -157,7 +158,7 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
   }, [updateTf]);
 
   useEffect(() => {
-    if (isDelivering) {
+    if (isDelivering && !isPaused) {
       playMotor();
     } else {
       stopMotor();
@@ -165,7 +166,7 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
     return () => {
       stopMotor();
     };
-  }, [isDelivering, playMotor, stopMotor]);
+  }, [isDelivering, isPaused, playMotor, stopMotor]);
 
   // ── Mouse drag (desktop) ─────────────────────────────────────────────
   const onPointerDown = useCallback((e: React.PointerEvent) => {
@@ -245,24 +246,72 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
     return false;
   };
 
-  const getStepNumbers = (from: string, to: string) => {
+  // Returns all 1-based step indices where nodeId is visited in selectedRoute
+  const getNodeSteps = useCallback((nodeId: string): number[] => {
     const steps: number[] = [];
-    for (let i = 0; i < selectedRoute.length - 1; i++) {
-      const u = selectedRoute[i], v = selectedRoute[i + 1];
-      if ((u === from && v === to) || (u === to && v === from)) {
-        let accumulated = 0;
-        for (let s = 0; s < segmentLengths.length; s++) {
-          accumulated += segmentLengths[s];
-          if (i < accumulated) {
-            if (!steps.includes(s + 1)) {
-              steps.push(s + 1);
-            }
-            break;
-          }
-        }
+    for (let i = 1; i < selectedRoute.length; i++) {
+      if (selectedRoute[i] === nodeId) {
+        steps.push(i);
       }
     }
     return steps;
+  }, [selectedRoute]);
+
+  // Design per-step hitam putih: tanpa outline, padding kompak, dan ditumpuk jika multiple steps
+  // Angka terbesar berada di atas tumpukan
+  const renderStepBadge = (steps: number[], x: number, y: number, isSmall: boolean = false) => {
+    if (steps.length === 0) return null;
+    const baseR = isSmall ? 5.5 : 6.5;
+    const spacing = isSmall ? 9.5 : 11.5;
+    const totalH = (steps.length - 1) * spacing;
+    const startY = -totalH / 2;
+
+    // Urutkan angka terbesar di posisi paling atas (descending: index 0 = angka terbesar di cy paling atas)
+    const sortedSteps = [...steps].sort((a, b) => b - a);
+
+    // Untuk z-index layering yang sempurna (lingkaran atas menimpa lingkaran di bawahnya),
+    // kita gambar dari bawah ke atas (reverse render) sehingga lingkaran atas (angka terbesar) berada di layer paling atas
+    const items = sortedSteps.map((st, idx) => ({
+      st,
+      cy: startY + idx * spacing,
+      isTwoDigit: st >= 10,
+      r: st >= 10 ? baseR + 0.8 : baseR,
+    }));
+
+    return (
+      <g
+        transform={`translate(${x}, ${y})`}
+        className="pointer-events-none select-none animate-fade-in"
+      >
+        {items.slice().reverse().map(({ st, cy, isTwoDigit, r }, idx) => {
+          return (
+            <g key={idx} filter="url(#step-badge-shadow)">
+              <circle
+                cx="0"
+                cy={cy}
+                r={r}
+                fill="#ffffff"
+              />
+              <text
+                x="0"
+                y={cy}
+                textAnchor="middle"
+                dominantBaseline="central"
+                alignmentBaseline="central"
+                fontSize={isSmall ? (isTwoDigit ? "6" : "7.2") : (isTwoDigit ? "7" : "8.5")}
+                fontWeight="900"
+                fill="#000000"
+                style={{
+                  fontFamily: 'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                }}
+              >
+                {st}
+              </text>
+            </g>
+          );
+        })}
+      </g>
+    );
   };
 
   // Group segments between actual houses/store (filtering out waypoints) and sum their distances
@@ -327,7 +376,7 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
           )}
         </button>
 
-        {/* Help Button */}
+        {/* Help / Panduan Button (Button Tanda Seru) */}
         <button
           id="arena-help-btn"
           onClick={() => {
@@ -335,9 +384,9 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
             onHelpClick?.();
           }}
           className="bg-white/60 backdrop-blur-md border border-slate-200/80 rounded-lg p-2 md:p-2.5 shadow-sm hover:bg-white/85 active:scale-95 transition text-amber-600 cursor-pointer animate-fade-in flex items-center justify-center"
-          title="Cara Bermain"
+          title="Panduan Cara Bermain (Wajib Balik ke Toko Roti)"
         >
-          <HelpCircle className="w-5 h-5 md:w-5.5 md:h-5.5" />
+          <AlertCircle className="w-5 h-5 md:w-5.5 md:h-5.5 text-amber-600" />
         </button>
       </div>
 
@@ -494,6 +543,9 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
               <filter id="node-shadow" x="-30%" y="-30%" width="160%" height="160%">
                 <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#00000033" />
               </filter>
+              <filter id="step-badge-shadow" x="-40%" y="-40%" width="180%" height="180%">
+                <feDropShadow dx="0" dy="1.2" stdDeviation="1.5" floodColor="#00000045" />
+              </filter>
             </defs>
 
             <style>
@@ -643,6 +695,13 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
                   >
                     {wpNumber}
                   </text>
+
+                  {/* Black & White Step Badge at the turn point */}
+                  {(() => {
+                    const steps = getNodeSteps(house.id);
+                    if (steps.length === 0) return null;
+                    return renderStepBadge(steps, 8, -8, true);
+                  })()}
                 </g>
               );
             })}
@@ -723,20 +782,11 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
                       </g>
                     )}
                     <image href={markerSrc} x={-mHalf + ox} y={-mHalf + oy} width={mSize} height={mSize} preserveAspectRatio="xMidYMid meet" style={{ pointerEvents: 'auto', opacity: 1.0, filter: 'none', transition: 'all 0.3s ease', imageRendering: '-webkit-optimize-contrast' }} />
-                    {isInRoute && !isToko && (() => {
-                      const visitCount = selectedRoute.filter(id => id === house.id).length;
-                      return (
-                        <g transform={`translate(${ox + mHalf - 4}, ${oy - mHalf + 4})`}>
-                          <circle r="9" fill="#10b981" stroke="white" strokeWidth="1.5" />
-                          <path d="M-4 0 L-1.5 2.5 L4 -3" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                          {visitCount > 1 && (
-                            <g transform="translate(7, -7)">
-                              <circle r="6" fill="#f59e0b" stroke="white" strokeWidth="1.0" />
-                              <text y="2" textAnchor="middle" fontSize="6.5" fontWeight="black" fill="white">{visitCount}</text>
-                            </g>
-                          )}
-                        </g>
-                      );
+                    {/* Black & White Step Badge for Houses and Toko */}
+                    {(() => {
+                      const steps = getNodeSteps(house.id);
+                      if (steps.length === 0) return null;
+                      return renderStepBadge(steps, ox + mHalf - 3, oy - mHalf + 3, false);
                     })()}
                   </g>
                 </g>

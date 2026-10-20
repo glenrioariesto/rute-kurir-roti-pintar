@@ -51,7 +51,7 @@ const getSlides = (accentText: string): Slide[] => [
     title: 'TUJUAN PERMAINAN :',
     tips: [
       <>Temukan <strong className={`${accentText} font-extrabold`}>rute terpendek / paling efisien</strong> untuk mengunjungi semua rumah warga.</>,
-      <>Perjalanan dimulai dari <strong className={`${accentText} font-extrabold`}>Toko Roti</strong>, mengunjungi semua rumah, lalu <strong className={`${accentText} font-extrabold`}>kembali ke Toko Roti</strong>. Semakin pendek rute, semakin <strong className={`${accentText} font-extrabold`}>tinggi skor</strong> kamu!</>,
+      <>Perjalanan dimulai dari <strong className={`${accentText} font-extrabold`}>Toko Roti</strong>, mengunjungi semua rumah warga, lalu <strong className={`${accentText} font-extrabold`}>wajib kembali lagi ke Toko Roti</strong> di setiap stage! Semakin pendek rute, semakin <strong className={`${accentText} font-extrabold`}>tinggi skor</strong> kamu!</>,
     ],
   },
   {
@@ -83,6 +83,7 @@ const getSlides = (accentText: string): Slide[] => [
     title: 'KIRIM KURIR :',
     tips: [
       <><strong className={`${accentText} font-extrabold`}>Kurir roti</strong> akan otomatis berjalan melintasi rute yang kamu susun dan sistem akan menghitung <strong className={`${accentText} font-extrabold`}>jarak total</strong> perjalananmu.</>,
+      <><strong className="text-rose-600 font-extrabold">⚠️ ATURAN WAJIB:</strong> Di setiap stage/level, kurir <strong className={`${accentText} font-extrabold`}>harus balik lagi ke Toko Roti</strong> setelah mengantar ke semua rumah agar misi berhasil!</>,
       <>Cobalah <strong className={`${accentText} font-extrabold`}>berbagai kombinasi rute</strong> untuk mencari jalur yang paling efisien!</>,
     ],
   },

@@ -26,6 +26,7 @@ export interface House {
   radarColor?: string; // warna radar ping (default '#10b981')
   hideIcon?: boolean;   // sembunyikan icon emoji (🏠/🥖) di node
   waypointColors?: WaypointColors; // override per-waypoint, prioritas tertinggi
+  deliveryVideo?: string; // custom video asset path untuk pengantaran ke rumah ini
 }
 
 export interface Connection {
@@ -56,6 +57,7 @@ export interface LevelConfig {
   motorSize?: number; // ukuran sprite motor kurir (default 48)
   initialMotorImage?: string; // override default motor image when idle at start
   defaultWaypointColors?: WaypointColors; // default warna waypoint untuk seluruh level
+  deliveryVideo?: string; // custom default video asset path untuk level ini
   ctExplanation: {
     decomposition: string;
     patternRecognition: string;
