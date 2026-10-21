@@ -632,7 +632,9 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
             {level.houses.filter(h => h.isWaypoint).map((house) => {
               const isInRoute = selectedRoute.includes(house.id);
               const isLatest = selectedRoute[selectedRoute.length - 1] === house.id && !isDelivering;
-              const wpNumber = house.id.replace(/^(wp-|[Ww])/, '');
+              const steps = getNodeSteps(house.id);
+              const firstStep = steps[0];
+              const extraSteps = steps.slice(1);
 
               // Priority: per-waypoint → level default → hardcoded
               const hw = house.waypointColors;
@@ -685,23 +687,27 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
                     style={{ transition: 'all 0.3s ease' }}
                   />
 
-                  {/* Number label — always show */}
-                  <text
-                    y="3"
-                    textAnchor="middle"
-                    fontSize="8.5"
-                    fontWeight="black"
-                    fill={colors.text}
-                  >
-                    {wpNumber}
-                  </text>
+                  {/* First step label inside the waypoint circle — empty by default */}
+                  {firstStep !== undefined && (
+                    <text
+                      x="0"
+                      y="0"
+                      textAnchor="middle"
+                      dominantBaseline="central"
+                      alignmentBaseline="central"
+                      fontSize={firstStep >= 10 ? "7.5" : "8.5"}
+                      fontWeight="900"
+                      fill={colors.text}
+                      style={{
+                        fontFamily: 'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                      }}
+                    >
+                      {firstStep}
+                    </text>
+                  )}
 
-                  {/* Black & White Step Badge at the turn point */}
-                  {(() => {
-                    const steps = getNodeSteps(house.id);
-                    if (steps.length === 0) return null;
-                    return renderStepBadge(steps, 8, -8, true);
-                  })()}
+                  {/* Black & White Step Badge for repeated visits (step 2+) */}
+                  {extraSteps.length > 0 && renderStepBadge(extraSteps, 8, -8, true)}
                 </g>
               );
             })}
