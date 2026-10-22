@@ -14,7 +14,23 @@ const SOAL_IMAGES: Record<number, string> = {
   3: `${BASE}soal-3.webp`,
 };
 
-type Phase = 'toast-enter' | 'toast-visible' | 'soal-enter' | 'soal-visible' | 'exit' | 'done';
+const LEVEL_BORDER_COLORS: Record<number, string> = {
+  1: 'border-[#0f5a31]',
+  2: 'border-[#b45309]',
+  3: 'border-[#be123c]',
+};
+
+const PETUNJUK_IMAGE = `${BASE}petunjuk-rute.webp`;
+
+type Phase =
+  | 'toast-enter'
+  | 'toast-visible'
+  | 'soal-enter'
+  | 'soal-visible'
+  | 'petunjuk-enter'
+  | 'petunjuk-visible'
+  | 'exit'
+  | 'done';
 
 interface LevelIntroOverlayProps {
   levelId: number;
@@ -28,14 +44,16 @@ export const LevelIntroOverlay: React.FC<LevelIntroOverlayProps> = ({ levelId, o
     const timers: ReturnType<typeof setTimeout>[] = [];
 
     timers.push(setTimeout(() => setPhase('toast-visible'), 100));
-    timers.push(setTimeout(() => setPhase('soal-enter'), 1600));
-    timers.push(setTimeout(() => setPhase('soal-visible'), 2000));
+    timers.push(setTimeout(() => setPhase('soal-enter'), 1400));
+    timers.push(setTimeout(() => setPhase('soal-visible'), 1800));
+    timers.push(setTimeout(() => setPhase('petunjuk-enter'), 2300));
+    timers.push(setTimeout(() => setPhase('petunjuk-visible'), 2700));
 
     return () => timers.forEach(clearTimeout);
   }, []);
 
   const handleDismiss = useCallback(() => {
-    if (phase !== 'soal-visible') return;
+    if (phase !== 'soal-visible' && phase !== 'petunjuk-enter' && phase !== 'petunjuk-visible') return;
     setPhase('exit');
     setTimeout(() => {
       setPhase('done');
@@ -47,6 +65,7 @@ export const LevelIntroOverlay: React.FC<LevelIntroOverlayProps> = ({ levelId, o
 
   const toastSrc = LEVEL_TOAST_IMAGES[levelId] || LEVEL_TOAST_IMAGES[1];
   const soalSrc = SOAL_IMAGES[levelId] || SOAL_IMAGES[1];
+  const borderColor = LEVEL_BORDER_COLORS[levelId] || LEVEL_BORDER_COLORS[1];
 
   const isExit = phase === 'exit';
 
@@ -65,7 +84,13 @@ export const LevelIntroOverlay: React.FC<LevelIntroOverlayProps> = ({ levelId, o
   };
 
   // Soal: on exit, shrink and fly to bottom-right (where the persistent soal badge lives)
-  const showSoal = phase === 'soal-enter' || phase === 'soal-visible' || isExit;
+  const showSoal =
+    phase === 'soal-enter' ||
+    phase === 'soal-visible' ||
+    phase === 'petunjuk-enter' ||
+    phase === 'petunjuk-visible' ||
+    isExit;
+
   const soalStyle: React.CSSProperties = {
     transform:
       phase === 'soal-enter'
@@ -76,6 +101,25 @@ export const LevelIntroOverlay: React.FC<LevelIntroOverlayProps> = ({ levelId, o
     opacity: phase === 'soal-enter' ? 0 : isExit ? 0 : 1,
     transition: isExit
       ? 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)'
+      : 'all 0.4s cubic-bezier(0.22, 1, 0.36, 1)',
+  };
+
+  // Petunjuk Rute: pops in right after level-intro-soal-img appears
+  const showPetunjuk =
+    phase === 'petunjuk-enter' ||
+    phase === 'petunjuk-visible' ||
+    isExit;
+
+  const petunjukStyle: React.CSSProperties = {
+    transform:
+      phase === 'petunjuk-enter'
+        ? 'scale(0.85)'
+        : isExit
+        ? 'scale(0.5)'
+        : 'scale(1)',
+    opacity: phase === 'petunjuk-enter' ? 0 : isExit ? 0 : 1,
+    transition: isExit
+      ? 'all 0.45s cubic-bezier(0.4, 0, 0.2, 1)'
       : 'all 0.4s cubic-bezier(0.22, 1, 0.36, 1)',
   };
 
@@ -98,40 +142,51 @@ export const LevelIntroOverlay: React.FC<LevelIntroOverlayProps> = ({ levelId, o
       {/* Toast - center top area */}
       <div
         id="level-intro-toast-container"
-        className="relative z-10 mt-[6vh] sm:mt-[8vh] flex-shrink-0"
+        className="relative z-10 mt-[4vh] sm:mt-[6vh] flex-shrink-0"
         style={toastStyle}
       >
         <img
           id="level-intro-toast-img"
           src={toastSrc}
           alt={`Level ${levelId}`}
-          className="h-12 sm:h-16 md:h-20 lg:h-24 w-auto object-contain drop-shadow-[0_4px_20px_rgba(0,0,0,0.4)]"
+          className="h-10 sm:h-14 md:h-18 lg:h-22 w-auto object-contain drop-shadow-[0_4px_20px_rgba(0,0,0,0.4)]"
           draggable={false}
         />
       </div>
 
-      {/* Soal - center center */}
+      {/* Soal & Petunjuk Rute - center area */}
       {showSoal && (
         <div
           id="level-intro-soal-container"
-          className="relative z-10 flex-1 flex items-center justify-center px-4"
-          style={soalStyle}
+          className="relative z-10 flex-1 flex flex-col items-center justify-center gap-2.5 sm:gap-4 px-4 min-h-0"
         >
-          <div className="relative">
+          <div className="relative" style={soalStyle}>
             <img
               id="level-intro-soal-img"
               src={soalSrc}
               alt={`Soal Level ${levelId}`}
-              className="max-w-[90vw] sm:max-w-[70vw] md:max-w-[500px] lg:max-w-[560px] w-auto object-contain drop-shadow-[0_8px_32px_rgba(0,0,0,0.35)]"
+              className="max-w-[88vw] sm:max-w-[68vw] md:max-w-[480px] lg:max-w-[540px] max-h-[22vh] sm:max-h-[24vh] w-auto object-contain drop-shadow-[0_8px_32px_rgba(0,0,0,0.35)]"
               draggable={false}
             />
           </div>
+
+          {showPetunjuk && (
+            <div id="level-intro-petunjuk-container" className="relative" style={petunjukStyle}>
+              <img
+                id="level-intro-petunjuk-img"
+                src={PETUNJUK_IMAGE}
+                alt={`Petunjuk Rute Level ${levelId}`}
+                className={`max-w-[88vw] sm:max-w-[68vw] md:max-w-[480px] lg:max-w-[540px] max-h-[32vh] sm:max-h-[36vh] w-auto object-contain rounded-xl sm:rounded-2xl border-[3px] sm:border-[5px] ${borderColor} drop-shadow-[0_8px_32px_rgba(0,0,0,0.35)]`}
+                draggable={false}
+              />
+            </div>
+          )}
         </div>
       )}
 
       {/* Tap to continue hint */}
-      {phase === 'soal-visible' && (
-        <div id="level-intro-hint" className="relative z-10 mb-[6vh] animate-pulse">
+      {phase === 'petunjuk-visible' && (
+        <div id="level-intro-hint" className="relative z-10 mb-[4vh] sm:mb-[6vh] animate-pulse">
           <span className="text-white/80 text-xs sm:text-sm md:text-base font-semibold tracking-wider uppercase drop-shadow-md">
             Ketuk untuk mulai
           </span>
