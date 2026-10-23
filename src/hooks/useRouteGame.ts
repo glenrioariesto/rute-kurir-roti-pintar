@@ -196,7 +196,7 @@ export function useRouteGame(level: LevelConfig) {
 
     if (!endsAtToko) {
       setScore(40);
-      setFeedback('Roti sudah sampai ke semua warga, tapi kurir belum kembali ke Toko Roti! Ingat, di setiap stage kurir harus balik lagi ke Toko Roti.');
+      setFeedback('Pesanan roti telah diantarkan ke seluruh rumah warga, tetapi kurir belum kembali ke Toko Roti! Ingat, pada setiap level kurir wajib kembali ke Toko Roti.');
       setShowResult(true);
       return;
     }
@@ -236,7 +236,7 @@ export function useRouteGame(level: LevelConfig) {
     }
 
     if (selectedRoute[selectedRoute.length - 1] !== 'Toko') {
-      setErrorToast('🥖 Di setiap stage, kurir harus balik lagi ke Toko Roti setelah mengantar semua pesanan!');
+      setErrorToast('🥖 Pada setiap level, kurir wajib kembali ke Toko Roti setelah mengantarkan seluruh pesanan!');
       setTimeout(() => setErrorToast(null), 3500);
       return;
     }

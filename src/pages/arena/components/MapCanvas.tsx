@@ -384,7 +384,7 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
             onHelpClick?.();
           }}
           className="bg-white/60 backdrop-blur-md border border-slate-200/80 rounded-lg p-2 md:p-2.5 shadow-sm hover:bg-white/85 active:scale-95 transition text-amber-600 cursor-pointer animate-fade-in flex items-center justify-center"
-          title="Panduan Cara Bermain (Wajib Balik ke Toko Roti)"
+          title="Panduan Cara Bermain (Wajib Kembali ke Toko Roti)"
         >
           <AlertCircle className="w-5 h-5 md:w-5.5 md:h-5.5 text-amber-600" />
         </button>

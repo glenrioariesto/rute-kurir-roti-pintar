@@ -41,7 +41,7 @@ export const levels: LevelConfig[] = [
     linear: true,
     hideConnectionLines: true,
     mapImage: 'map-level-1.webp?v=3',
-    description: 'Setiap pagi, kurir roti mengantarkan pesanan dari Toko Roti ke 6 rumah warga. Temukan rute terpendek untuk mengunjungi semua rumah dan kembali lagi ke Toko Roti!',
+    description: 'Setiap pagi, kurir roti mengantarkan pesanan dari Toko Roti ke 6 rumah warga. Temukan rute terpendek untuk mengunjungi seluruh rumah dan kembali ke Toko Roti!',
     hints: 'Pilihlah rute yang teratur agar tidak bolak-balik melintasi jalur yang sama.',
     startTimeString: '07:00',
     houses: [
